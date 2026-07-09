@@ -1,5 +1,14 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: fantasy
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  docker:
+    compose:
+      enabled: true
 
 
