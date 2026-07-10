@@ -10,5 +10,9 @@ spring:
   docker:
     compose:
       enabled: true
+telegram:
+  bot:
+    name: fantasy_esports_bot
+    token: ${TELEGRAM_TOKEN}
 
 
