@@ -1,15 +1,22 @@
 package com.fezlr.fantasy.user.dto.response;
 
+import lombok.Builder;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
+@Builder
 public record UserResponse(
-
+        @NotNull
         Long telegramId,
 
         String telegramUsername,
 
-        LocalDateTime createdAt,
+        @NotNull
+        Instant createdAt,
 
-        LocalDateTime lastActiveAt
+        @NotNull
+        Instant lastActiveAt
 ) {
 }

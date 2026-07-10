@@ -2,8 +2,10 @@ package com.fezlr.fantasy.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.checkerframework.common.aliasing.qual.Unique;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -12,22 +14,24 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Unique
     @Column(name = "telegram_id", nullable = false)
     private Long telegramId;
 
     //@example
-    @Column(name = "telegram_username", nullable = false)
+    @Column(name = "telegram_username")
     private String telegramUsername;
 
     //In project
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
 
     @Column(name = "last_active_at", nullable = false)
-    private LocalDateTime lastActiveAt;
+    private Instant lastActiveAt;
 }
