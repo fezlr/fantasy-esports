@@ -1,0 +1,210 @@
+:root {
+    --color-bg: #121317;
+    --color-panel: #1b1d24;
+    --color-panel-border: #2a2d37;
+    --color-accent: #e3a63e;
+    --color-text: #eceef2;
+    --color-text-muted: #8b8f9c;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-full: 999px;
+    --gap-page: 16px;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    padding: 0 16px;
+}
+
+.page-content {
+    padding: var(--gap-page);
+    padding-bottom: 96px;
+    min-height: 100vh;
+}
+
+.page {
+    animation: fade-in 0.15s ease;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.stub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+}
+
+.stub__text {
+    color: var(--color-text-muted);
+    font-size: 15px;
+    text-align: center;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.profile-header__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-panel-border);
+    object-fit: cover;
+}
+
+.profile-header__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.profile-header__username {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.profile-header__id {
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.stats-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+    padding: 10px 8px 16px;
+    margin-bottom: 16px;
+}
+
+.stats-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.stats-card__grid {
+    display: flex;
+    justify-content: center;
+}
+
+.stat {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    margin: 4px 6px;
+    padding: 16px 2px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+}
+
+.stat__value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.stat__label {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.support-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+.support-link__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.support-link__text {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.support-link__arrow {
+    color: var(--color-text-muted);
+    font-size: 18px;
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 24px;
+    left: var(--gap-page);
+    right: var(--gap-page);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px var(--gap-page);
+    background: var(--color-panel);
+    border-top: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+}
+
+.bottom-nav__btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bottom-nav__btn--active {
+    color: var(--color-accent);
+    background: rgba(227, 166, 62, 0.1);
+    font-weight: 600;
+}

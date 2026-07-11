@@ -3,6 +3,7 @@ package com.fezlr.fantasy.telegram.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fezlr.fantasy.user.dto.request.TelegramUserData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +22,9 @@ import java.util.stream.Collectors;
 public class InitDataValidator {
     @Value("${telegram.bot.token}")
     private String botToken;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Long validateAndExtractUserId(String initData) {
+    public TelegramUserData validateAndExtractUser(String initData) {
         Map<String, String> params = parse(initData);
         String receivedHash = params.remove("hash");
         if (receivedHash == null) {
@@ -34,23 +36,10 @@ public class InitDataValidator {
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining("\n"));
 
-        try {
-            SecretKeySpec secretKeySpec = new SecretKeySpec("WebAppData".getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-            Mac secretMac = Mac.getInstance("HmacSHA256");
-            secretMac.init(secretKeySpec);
-            byte[] secretKey = secretMac.doFinal(botToken.getBytes(StandardCharsets.UTF_8));
+        String computedHash = calculateHash(dataCheckString);
 
-            Mac dataMac = Mac.getInstance("HmacSHA256");
-            dataMac.init(new SecretKeySpec(secretKey, "HmacSHA256"));
-            byte[] computedHash = dataMac.doFinal(dataCheckString.getBytes(StandardCharsets.UTF_8));
-
-            String computedHashHex = HexFormat.of().formatHex(computedHash);
-
-            if (!computedHashHex.equals(receivedHash)) {
-                throw new SecurityException("Invalid initData hash");
-            }
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+        if (!computedHash.equals(receivedHash)) {
+            throw new SecurityException("Invalid initData hash");
         }
 
         String userJson = params.get("user");
@@ -58,23 +47,46 @@ public class InitDataValidator {
             throw new SecurityException("Missing user in initData");
         }
 
-        return extractUserId(userJson);
+        return parseUser(userJson);
+    }
+
+    private String calculateHash(String dataCheckString) {
+        try {
+            Mac secretMac = Mac.getInstance("HmacSHA256");
+            secretMac.init(new SecretKeySpec("WebAppData".getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] secretKey = secretMac.doFinal(botToken.getBytes(StandardCharsets.UTF_8));
+
+            Mac dataMac = Mac.getInstance("HmacSHA256");
+            dataMac.init(new SecretKeySpec(secretKey, "HmacSHA256"));
+            byte[] hash = dataMac.doFinal(dataCheckString.getBytes(StandardCharsets.UTF_8));
+
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Map<String, String> parse(String initData) {
         Map<String, String> result = new HashMap<>();
         for (String pair : initData.split("&")) {
+            if (pair.isBlank()) {
+                continue;
+            }
             String[] kv = pair.split("=", 2);
+            if (kv.length != 2) {
+                continue;
+            }
             result.put(kv[0], URLDecoder.decode(kv[1], StandardCharsets.UTF_8));
         }
         return result;
     }
 
-    private Long extractUserId(String userJson) {
+    private TelegramUserData parseUser(String userJson) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(userJson);
-            return node.get("id").asLong();
+            JsonNode node = objectMapper.readTree(userJson);
+            Long id = node.get("id").asLong();
+            String username = node.hasNonNull("username") ? node.get("username").asText() : null;
+            return new TelegramUserData(id, username);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

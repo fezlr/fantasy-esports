@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,6 +44,38 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<ErrorResponseDto> handleMissingHeader(MissingRequestHeaderException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad request")
+                .message("Required request header is missing")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ErrorResponseDto> handleSecurityException(SecurityException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Unauthorized")
+                .message("Invalid authentication data")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(message);
     }
 
