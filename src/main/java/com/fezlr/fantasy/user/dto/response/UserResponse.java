@@ -4,7 +4,6 @@ import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Builder
 public record UserResponse(

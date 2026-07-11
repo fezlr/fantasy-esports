@@ -9,6 +9,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByTelegramId(Long telegramId);
 
-    boolean existsByTelegramId(Long telegramId);
-
 }

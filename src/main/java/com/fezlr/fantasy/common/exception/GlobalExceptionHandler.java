@@ -1,0 +1,64 @@
+package com.fezlr.fantasy.common.exception;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.Instant;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleGeneralException(Exception e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message("Unexpected error occurred")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(message);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleConstraintViolationException(ConstraintViolationException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad request")
+                .message("Validation failed for one or more fields")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(EntityNotFoundException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not found")
+                .message("Entity is not found")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+}
