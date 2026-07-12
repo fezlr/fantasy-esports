@@ -14,5 +14,8 @@ telegram:
   bot:
     name: fantasy_esports_bot
     token: ${TELEGRAM_TOKEN}
+pandascore:
+  base-url: https://app.pandascore.co/
+  api-key: ${PANDA_SCORE_API_KEY}
 
 

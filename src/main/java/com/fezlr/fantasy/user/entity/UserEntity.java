@@ -19,8 +19,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Unique
-    @Column(name = "telegram_id", nullable = false)
+    @Column(name = "telegram_id", nullable = false, unique = true)
     private Long telegramId;
 
     //@example
