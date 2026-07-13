@@ -4,6 +4,7 @@ import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "teams")
-public class TeamEntity {
+public class TeamCS2Entity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +32,10 @@ public class TeamEntity {
     @Column(name = "source_id", unique = true)
     private Long sourceId;
 
+    @Builder.Default
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<PlayerCS2Entity> players = new ArrayList<>();
+
+    @Column(name = "last_synced_at")
+    private Instant lastSyncedAt;
 }

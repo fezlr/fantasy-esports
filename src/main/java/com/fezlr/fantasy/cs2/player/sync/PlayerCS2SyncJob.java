@@ -1,13 +1,12 @@
-package com.fezlr.fantasy.pandascore.sync;
+package com.fezlr.fantasy.cs2.player.sync;
 
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
 import com.fezlr.fantasy.pandascore.client.PandaScoreClient;
 import com.fezlr.fantasy.pandascore.dto.PandaScorePlayerDto;
-import com.fezlr.fantasy.pandascore.mapper.PandaScoreMapper;
+import com.fezlr.fantasy.pandascore.mapper.PandaScorePlayerCS2Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -16,12 +15,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class PlayerSyncJob {
+public class PlayerCS2SyncJob {
     private final PandaScoreClient pandaScoreClient;
-    private final PandaScoreMapper pandaScoreMapper;
+    private final PandaScorePlayerCS2Mapper pandaScorePlayerCS2Mapper;
     private final PlayerCS2Service playerCS2Service;
 
-    @Scheduled(fixedRate = 3_600_000)
     public void syncPlayers() {
         log.info("Starting syncing players INSTANT={}", Instant.now());
         List<PandaScorePlayerDto> players = pandaScoreClient.fetchAllPlayers();
@@ -29,7 +27,7 @@ public class PlayerSyncJob {
         int updated = 0;
         for (PandaScorePlayerDto dto : players) {
             try {
-                PlayerCS2Entity entity = pandaScoreMapper.toEntity(dto);
+                PlayerCS2Entity entity = pandaScorePlayerCS2Mapper.toEntity(dto);
                 playerCS2Service.createOrUpdate(entity);
                 updated++;
             } catch (Exception e) {

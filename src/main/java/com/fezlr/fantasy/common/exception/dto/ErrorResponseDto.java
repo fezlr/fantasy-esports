@@ -1,4 +1,4 @@
-package com.fezlr.fantasy.common.exception;
+package com.fezlr.fantasy.common.exception.dto;
 
 import lombok.Builder;
 

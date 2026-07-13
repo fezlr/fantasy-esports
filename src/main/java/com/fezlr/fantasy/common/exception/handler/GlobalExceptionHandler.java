@@ -1,5 +1,7 @@
-package com.fezlr.fantasy.common.exception;
+package com.fezlr.fantasy.common.exception.handler;
 
+import com.fezlr.fantasy.common.exception.SourceIdNotFound;
+import com.fezlr.fantasy.common.exception.dto.ErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
                 .message("Entity is not found")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+
+    @ExceptionHandler(SourceIdNotFound.class)
+    public ResponseEntity<ErrorResponseDto> handleSourceIdNotFoundException(SourceIdNotFound e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not found")
+                .message("Value is not found")
                 .timestamp(Instant.now().toString())
                 .build();
 

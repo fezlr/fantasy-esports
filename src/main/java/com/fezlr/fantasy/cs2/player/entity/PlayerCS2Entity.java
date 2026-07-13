@@ -1,7 +1,7 @@
 package com.fezlr.fantasy.cs2.player.entity;
 
 import com.fezlr.fantasy.cs2.enums.Role;
-import com.fezlr.fantasy.cs2.team.entity.TeamEntity;
+import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,12 +29,12 @@ public class PlayerCS2Entity {
     private String lastName;
 
     //hltv rating for 3 months
-    @Column(name = "rating", precision = 3, scale = 2)
+    @Column(name = "rating", precision = 3)
     private Float rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-    private TeamEntity team;
+    private TeamCS2Entity team;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")

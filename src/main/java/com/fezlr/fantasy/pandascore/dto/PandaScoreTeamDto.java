@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record PandaScoreTeamDto(
         //pandascore id
         //not in entity
-        @JsonProperty("id") Long id,
+        @JsonProperty("id") Long sourceId,
 
         //not in entity
         @JsonProperty("location") String location,

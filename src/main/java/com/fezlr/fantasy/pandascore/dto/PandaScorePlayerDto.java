@@ -18,7 +18,7 @@ public record PandaScorePlayerDto(
         @JsonProperty("birthday") String birthDay,
 
         //team_id in pandascore
-        @JsonProperty("team_id") String teamId,
+        @JsonProperty("team_id") Long teamId,
 
         @JsonProperty("active") boolean isActive
 ) {

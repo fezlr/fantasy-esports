@@ -9,13 +9,9 @@ public class PandaScoreClientConfig {
     @Value("${pandascore.base-url}")
     private String baseUrl;
 
-    @Value("${pandascore.api-key}")
-    private String apiKey;
-
     public RestClient pandaScoreRestClient() {
         return RestClient.builder()
                 .baseUrl(baseUrl)
-                .defaultHeader("Authorization", "Bearer " + apiKey)
                 .build();
     }
 }
