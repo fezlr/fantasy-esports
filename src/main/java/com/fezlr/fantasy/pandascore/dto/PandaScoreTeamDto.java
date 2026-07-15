@@ -2,14 +2,19 @@ package com.fezlr.fantasy.pandascore.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public record PandaScoreTeamDto(
-        //pandascore id
-        //not in entity
         @JsonProperty("id") Long sourceId,
 
-        //not in entity
         @JsonProperty("location") String location,
 
-        @JsonProperty("name") String name
+        @JsonProperty("name") String name,
+
+        @JsonProperty("acronym") String acronym,
+
+        @JsonProperty("image_url") String imageUrl,
+
+        @JsonProperty("players") List<PandaScorePlayerDto> players
 ) {
 }

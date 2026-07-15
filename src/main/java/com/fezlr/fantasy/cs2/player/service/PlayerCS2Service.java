@@ -21,7 +21,11 @@ public class PlayerCS2Service {
                     existing.setLastName(newPlayerInfoEntity.getLastName());
                     existing.setNickname(newPlayerInfoEntity.getNickname());
                     existing.setImageUrl(newPlayerInfoEntity.getImageUrl());
-                    existing.setTeam(newPlayerInfoEntity.getTeam());
+
+                    if (newPlayerInfoEntity.getTeam() != null) {
+                        existing.setTeam(newPlayerInfoEntity.getTeam());
+                    }
+
                     existing.setActive(newPlayerInfoEntity.isActive());
                     existing.setLastSyncedAt(Instant.now());
 
