@@ -1,0 +1,220 @@
+.teams-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.team-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.team-card:active {
+    background: rgba(227, 166, 62, 0.08);
+}
+
+.team-card__logo {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-panel-border);
+    object-fit: cover;
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.team-card__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.team-card__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.team-card__rank {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.team-card__rank-value {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.team-card__arrow {
+    color: var(--color-text-muted);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* Modal */
+
+.team-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.team-modal[hidden] {
+    display: none;
+}
+
+.team-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.team-modal__panel {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    animation: modal-up 0.18s ease;
+}
+
+@keyframes modal-up {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.team-modal__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.team-modal__logo {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-panel-border);
+    object-fit: cover;
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.team-modal__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.team-modal__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.team-modal__rank {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.team-modal__close {
+    background: var(--color-bg);
+    border: none;
+    color: var(--color-text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.team-modal__players {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+}
+
+.player-row__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    background: var(--color-panel);
+    flex-shrink: 0;
+}
+
+.player-row__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.player-row__nickname {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.player-row__fullname {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-row__status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.player-row__status--active {
+    color: var(--color-accent);
+    background: rgba(227, 166, 62, 0.12);
+}
+
+.player-row__status--bench {
+    color: var(--color-text-muted);
+    background: rgba(139, 143, 156, 0.12);
+}

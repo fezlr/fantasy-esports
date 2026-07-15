@@ -30,6 +30,11 @@ async function showPage(pageId) {
     const html = await loadPageHtml(pageId);
     pageContent.innerHTML = html;
 
+    if (pageId === 'players') {
+            initTeamModalHandlers();
+            loadTeams();
+    }
+
     if (pageId === 'profile') {
         loadUser();
     }

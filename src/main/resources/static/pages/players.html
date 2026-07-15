@@ -1,5 +1,22 @@
 <section class="page" data-page="players">
-    <div class="stub">
-        <p class="stub__text">Здесь появится список игроков</p>
+    <div class="teams-list" id="teams-list">
+        <div class="stub">
+            <span class="stub__text">Загрузка команд...</span>
+        </div>
     </div>
 </section>
+
+<div class="team-modal" id="team-modal" hidden>
+    <div class="team-modal__backdrop" id="team-modal-backdrop"></div>
+    <div class="team-modal__panel">
+        <div class="team-modal__header">
+            <img class="team-modal__logo" id="team-modal-logo" src="" alt="">
+            <div class="team-modal__info">
+                <span class="team-modal__name" id="team-modal-name"></span>
+                <span class="team-modal__rank" id="team-modal-rank"></span>
+            </div>
+            <button class="team-modal__close" id="team-modal-close" type="button">×</button>
+        </div>
+        <div class="team-modal__players" id="team-modal-players"></div>
+    </div>
+</div>

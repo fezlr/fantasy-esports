@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 
@@ -87,6 +88,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
                 .message("Entity is not found")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(NoResourceFoundException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not found")
+                .message("Resource is not found")
                 .timestamp(Instant.now().toString())
                 .build();
 
