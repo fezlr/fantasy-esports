@@ -23,9 +23,10 @@
 .team-card__logo {
     width: 44px;
     height: 44px;
-    border-radius: var(--radius-full);
+    padding: 4px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--color-panel-border);
-    object-fit: cover;
+    object-fit: contain;
     background: var(--color-bg);
     flex-shrink: 0;
 }
@@ -62,8 +63,6 @@
     font-size: 18px;
     flex-shrink: 0;
 }
-
-/* Modal */
 
 .team-modal {
     position: fixed;
@@ -114,9 +113,10 @@
 .team-modal__logo {
     width: 48px;
     height: 48px;
-    border-radius: var(--radius-full);
+    padding: 6px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--color-panel-border);
-    object-fit: cover;
+    object-fit: contain;
     background: var(--color-bg);
     flex-shrink: 0;
 }

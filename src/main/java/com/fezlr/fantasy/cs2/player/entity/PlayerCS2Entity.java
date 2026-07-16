@@ -5,6 +5,7 @@ import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -28,10 +29,6 @@ public class PlayerCS2Entity {
     @Column(name = "last_name")
     private String lastName;
 
-    //hltv rating for 3 months
-    @Column(name = "rating", precision = 3)
-    private Float rating;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private TeamCS2Entity team;
@@ -40,11 +37,18 @@ public class PlayerCS2Entity {
     @Column(name = "role")
     private Role role;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    //hltv rating for 3 months
+    @Column(name = "hltv_rating", precision = 3)
+    private BigDecimal hltvRating;
 
-    @Column(name = "source_id", unique = true)
-    private Long sourceId;
+    @Column(name = "hltv_image_url")
+    private String hltvImageUrl;
+
+    @Column(name = "hltv_id")
+    private Long hltvId;
+
+    @Column(name = "panda_score_id", unique = true)
+    private Long pandaScoreId;
 
     @Column(name = "last_synced_at")
     private Instant lastSyncedAt;

@@ -12,6 +12,7 @@ public record PandaScorePlayerDto(
 
         @JsonProperty("last_name") String lastName,
 
+        //disabled in mapper
         @JsonProperty("image_url") String imageUrl,
 
         //not in entity

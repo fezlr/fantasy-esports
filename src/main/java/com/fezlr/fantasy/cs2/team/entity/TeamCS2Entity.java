@@ -29,8 +29,8 @@ public class TeamCS2Entity {
     @Column(name = "logo_url")
     private String logoUrl;
 
-    @Column(name = "source_id", unique = true)
-    private Long sourceId;
+    @Column(name = "panda_score_id", unique = true)
+    private Long pandaScoreId;
 
     @Builder.Default
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)

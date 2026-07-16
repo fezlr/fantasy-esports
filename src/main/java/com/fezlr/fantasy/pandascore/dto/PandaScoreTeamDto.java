@@ -13,6 +13,7 @@ public record PandaScoreTeamDto(
 
         @JsonProperty("acronym") String acronym,
 
+        //disabled in mapper
         @JsonProperty("image_url") String imageUrl,
 
         @JsonProperty("players") List<PandaScorePlayerDto> players

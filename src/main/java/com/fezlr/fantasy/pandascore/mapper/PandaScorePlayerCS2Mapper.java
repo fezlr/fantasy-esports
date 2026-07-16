@@ -22,7 +22,6 @@ public class PandaScorePlayerCS2Mapper {
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .team(team)
-                .imageUrl(dto.imageUrl())
                 .sourceId(dto.sourceId())
                 .lastSyncedAt(Instant.now())
                 .isActive(dto.isActive())
