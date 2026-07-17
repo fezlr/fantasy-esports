@@ -18,7 +18,7 @@ public class PlayerCS2Service {
 
     @Transactional
     public PlayerCS2Entity createOrUpdate(PlayerCS2Entity newPlayerInfoEntity) {
-        return playerCS2Repository.findBySourceId(newPlayerInfoEntity.getSourceId())
+        return playerCS2Repository.findByPandaScoreId(newPlayerInfoEntity.getPandaScoreId())
                 .map(existing -> {
                     existing.setFirstName(newPlayerInfoEntity.getFirstName());
                     existing.setLastName(newPlayerInfoEntity.getLastName());

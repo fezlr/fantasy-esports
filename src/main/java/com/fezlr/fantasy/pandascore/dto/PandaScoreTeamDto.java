@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record PandaScoreTeamDto(
-        @JsonProperty("id") Long sourceId,
+        @JsonProperty("id") Long pandaScoreId,
 
         @JsonProperty("location") String location,
 
@@ -13,8 +13,7 @@ public record PandaScoreTeamDto(
 
         @JsonProperty("acronym") String acronym,
 
-        //disabled in mapper
-        @JsonProperty("image_url") String imageUrl,
+        @JsonProperty("image_url") String logoUrl,
 
         @JsonProperty("players") List<PandaScorePlayerDto> players
 ) {

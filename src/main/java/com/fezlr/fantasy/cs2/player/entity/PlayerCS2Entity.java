@@ -4,8 +4,6 @@ import com.fezlr.fantasy.cs2.enums.Role;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -33,24 +31,24 @@ public class PlayerCS2Entity {
     @JoinColumn(name = "team_id")
     private TeamCS2Entity team;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "player_statistics")
+    private PlayerCS2StatisticEntity playerStatistics;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
-    //hltv rating for 3 months
-    @Column(name = "hltv_rating", precision = 3)
-    private BigDecimal hltvRating;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @Column(name = "hltv_image_url")
-    private String hltvImageUrl;
-
-    @Column(name = "hltv_id")
-    private Long hltvId;
+    @Column(name = "grid_id")
+    private Long gridId;
 
     @Column(name = "panda_score_id", unique = true)
     private Long pandaScoreId;
 
-    @Column(name = "last_synced_at")
+    @Column(name = "last_synced_at", nullable = false)
     private Instant lastSyncedAt;
 
     //is a player playing currently or not

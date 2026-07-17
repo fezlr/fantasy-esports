@@ -24,14 +24,14 @@ async function loadTeams() {
 function renderTeams(teams) {
     const list = document.getElementById('teams-list');
 
-    const sorted = [...teams].sort((a, b) => (a.hltvRank ?? 999) - (b.hltvRank ?? 999));
+    const sorted = [...teams].sort((a, b) => (a.valveRank ?? 999) - (b.valveRank ?? 999));
 
     list.innerHTML = sorted.map((team, index) => `
         <div class="team-card" data-team-index="${index}">
             <img class="team-card__logo" src="${team.logoUrl || placeholderImg(44)}" alt="">
             <div class="team-card__info">
                 <span class="team-card__name">${escapeHtml(team.name)}</span>
-                <span class="team-card__rank">HLTV <span class="team-card__rank-value">#${team.hltvRank ?? '—'}</span></span>
+                <span class="team-card__rank">VALVE <span class="team-card__rank-value">#${team.valveRank ?? '—'}</span></span>
             </div>
             <span class="team-card__arrow">›</span>
         </div>
@@ -50,7 +50,7 @@ function renderTeams(teams) {
 function openTeamModal(team) {
     document.getElementById('team-modal-logo').src = team.logoUrl || placeholderImg(48);
     document.getElementById('team-modal-name').textContent = team.name;
-    document.getElementById('team-modal-rank').textContent = `HLTV #${team.hltvRank ?? '—'}`;
+    document.getElementById('team-modal-rank').textContent = `HLTV #${team.valveRank ?? '—'}`;
 
     const playersEl = document.getElementById('team-modal-players');
     const players = [...(team.players || [])].sort((a, b) => Number(b.isActive) - Number(a.isActive));

@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.cs2.sync;
 
-import com.fezlr.fantasy.cs2.team.sync.TeamCS2SyncJob;
+import com.fezlr.fantasy.grid.sync.GridSyncJob;
+import com.fezlr.fantasy.pandascore.sync.PandaScoreSyncJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,13 +11,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class CS2SyncJob {
-    private final TeamCS2SyncJob teamCS2SyncJob;
+    private final PandaScoreSyncJob pandaScoreSyncJob;
+    private final GridSyncJob gridSyncJob;
 
     @Scheduled(fixedRate = 3_600_000)
     public void syncAll() {
         log.info("Starting syncAll..");
 
-        teamCS2SyncJob.syncTeams();
+        //pandascore api
+        pandaScoreSyncJob.syncTeamsAndPlayers();
+
+        //grid api
+        gridSyncJob.syncPlayers();
 
         log.info("Ending syncAll...");
     }

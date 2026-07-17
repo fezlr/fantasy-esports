@@ -23,8 +23,8 @@ public class TeamCS2Entity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "hltv_rank")
-    private Integer hltvRank;
+    @Column(name = "valve_rank")
+    private Integer valveRank;
 
     @Column(name = "logo_url")
     private String logoUrl;
@@ -36,6 +36,6 @@ public class TeamCS2Entity {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<PlayerCS2Entity> players = new ArrayList<>();
 
-    @Column(name = "last_synced_at")
+    @Column(name = "last_synced_at", nullable = false)
     private Instant lastSyncedAt;
 }

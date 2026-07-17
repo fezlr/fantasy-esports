@@ -18,7 +18,8 @@ public class PlayerCS2Controller {
 
     @GetMapping
     public ResponseEntity<List<PlayerCS2Response>> getAllPlayers() {
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(playerCS2Service.findAllPlayers());
     }
 }

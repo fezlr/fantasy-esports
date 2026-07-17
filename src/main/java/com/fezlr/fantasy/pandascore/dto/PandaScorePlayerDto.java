@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record PandaScorePlayerDto(
         //pandascore id
-        @JsonProperty("id") Long sourceId,
+        @JsonProperty("id") Long pandaScoreId,
 
         @JsonProperty("name") String nickname,
 

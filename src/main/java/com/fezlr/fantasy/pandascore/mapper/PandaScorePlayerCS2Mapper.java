@@ -6,7 +6,6 @@ import com.fezlr.fantasy.cs2.team.service.TeamCS2Service;
 import com.fezlr.fantasy.pandascore.dto.PandaScorePlayerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.time.Instant;
 
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class PandaScorePlayerCS2Mapper {
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .team(team)
-                .sourceId(dto.sourceId())
+                .pandaScoreId(dto.pandaScoreId())
                 .lastSyncedAt(Instant.now())
                 .isActive(dto.isActive())
                 .build();

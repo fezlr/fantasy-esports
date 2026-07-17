@@ -11,7 +11,7 @@ public class PlayerCS2Mapper {
                 .nickname(entity.getNickname())
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
-                .imageUrl(entity.getHltvImageUrl())
+                .imageUrl(entity.getImageUrl())
                 .teamId(entity.getTeam().getId())
                 .isActive(entity.isActive())
                 .build();

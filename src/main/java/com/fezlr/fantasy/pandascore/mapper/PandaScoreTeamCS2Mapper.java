@@ -11,7 +11,8 @@ public class PandaScoreTeamCS2Mapper {
     public TeamCS2Entity toEntity(PandaScoreTeamDto dto) {
         return TeamCS2Entity.builder()
                 .name(dto.name())
-                .sourceId(dto.sourceId())
+                .pandaScoreId(dto.pandaScoreId())
+                .logoUrl(dto.logoUrl())
                 .lastSyncedAt(Instant.now())
                 .build();
     }

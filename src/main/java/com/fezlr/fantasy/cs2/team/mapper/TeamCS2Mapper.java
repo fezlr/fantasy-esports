@@ -14,7 +14,7 @@ public class TeamCS2Mapper {
     public TeamCS2Response toResponse(TeamCS2Entity entity) {
         return TeamCS2Response.builder()
                 .name(entity.getName())
-                .hltvRank(entity.getHltvRank())
+                .valveRank(entity.getValveRank())
                 .logoUrl(entity.getLogoUrl())
                 .players(entity.getPlayers().stream().map(playerCS2Mapper::toResponse).toList())
                 .build();

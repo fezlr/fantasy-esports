@@ -8,7 +8,6 @@ import com.fezlr.fantasy.cs2.team.repository.TeamCS2Repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -19,13 +18,13 @@ public class TeamCS2Service {
     private final TeamCS2Mapper teamCS2Mapper;
 
     public TeamCS2Entity getBySourceId(Long sourceId) {
-        return teamCS2Repository.findBySourceId(sourceId)
+        return teamCS2Repository.findByPandaScoreId(sourceId)
                 .orElseThrow(() -> new SourceIdNotFound("Source id is not found"));
     }
 
     @Transactional
     public TeamCS2Entity createOrUpdate(TeamCS2Entity newTeamInfoEntity) {
-        return teamCS2Repository.findBySourceId(newTeamInfoEntity.getSourceId())
+        return teamCS2Repository.findByPandaScoreId(newTeamInfoEntity.getPandaScoreId())
                 .map(existing -> {
                     existing.setName(newTeamInfoEntity.getName());
                     existing.setLastSyncedAt(Instant.now());

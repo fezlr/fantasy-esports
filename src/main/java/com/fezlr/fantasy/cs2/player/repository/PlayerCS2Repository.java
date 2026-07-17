@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PlayerCS2Repository extends JpaRepository<PlayerCS2Entity, Long> {
 
-    Optional<PlayerCS2Entity> findBySourceId(Long sourceId);
+    Optional<PlayerCS2Entity> findByPandaScoreId(Long pandaScoreId);
 
 }

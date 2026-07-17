@@ -22,19 +22,9 @@ public class UserController {
 
     //TODO: remove required = false in prod!
     @GetMapping("/me")
-    public UserResponse getCurrentUser(
-            @RequestHeader(value = "X-Telegram-Init-Data"
-//                    , required = false
-            )
-            String initData) {
-
-//        //TODO: remove if-statement in prod!
-//        if (initData == null) {
-//            return userMapper.toResponse(userService.createOrUpdate(new TelegramUserData(123456789L, "test")));
-//        }
-
+    public UserResponse getCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
         TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
-        UserEntity userEntity = userService.createOrUpdate(telegramUser);
-        return userMapper.toResponse(userEntity);
+        UserEntity user = userService.createOrUpdate(telegramUser);
+        return userMapper.toResponse(user);
     }
 }

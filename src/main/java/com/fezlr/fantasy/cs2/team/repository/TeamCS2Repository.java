@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface TeamCS2Repository extends JpaRepository<TeamCS2Entity, Long> {
 
-    Optional<TeamCS2Entity> findBySourceId(Long sourceId);
+    Optional<TeamCS2Entity> findByPandaScoreId(Long pandaScoreId);
 }
