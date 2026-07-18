@@ -1,0 +1,14 @@
+query {
+  playerStatistics(playerId: "10940", filter: { timeWindow: LAST_3_MONTHS }) {
+    id
+    series {
+      ... on Cs2PlayerSeriesStatistics {
+        count
+        kills { sum min max avg }
+        killAssistsGiven { sum min max avg }
+        deaths { sum min max avg }
+        headshots { sum min max avg }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 package com.fezlr.fantasy.pandascore.client;
 
 import com.fezlr.fantasy.pandascore.config.PandaScoreClientConfig;
-import com.fezlr.fantasy.pandascore.dto.PandaScoreTeamDto;
+import com.fezlr.fantasy.pandascore.dto.request.PandaScoreTeamRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ public class PandaScoreClient {
     private List<Long> trackedTeamIds;
     private final PandaScoreClientConfig pandaScoreClientConfig;
 
-    public List<PandaScoreTeamDto> fetchTrackedTeams() {
+    public List<PandaScoreTeamRequest> fetchTrackedTeams() {
         String idsParam = trackedTeamIds.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));

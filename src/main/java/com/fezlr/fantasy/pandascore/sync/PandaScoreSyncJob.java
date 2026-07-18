@@ -5,8 +5,8 @@ import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import com.fezlr.fantasy.cs2.team.service.TeamCS2Service;
 import com.fezlr.fantasy.pandascore.client.PandaScoreClient;
-import com.fezlr.fantasy.pandascore.dto.PandaScorePlayerDto;
-import com.fezlr.fantasy.pandascore.dto.PandaScoreTeamDto;
+import com.fezlr.fantasy.pandascore.dto.request.PandaScorePlayerRequest;
+import com.fezlr.fantasy.pandascore.dto.request.PandaScoreTeamRequest;
 import com.fezlr.fantasy.pandascore.mapper.PandaScorePlayerCS2Mapper;
 import com.fezlr.fantasy.pandascore.mapper.PandaScoreTeamCS2Mapper;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,10 @@ public class PandaScoreSyncJob {
     private final PandaScorePlayerCS2Mapper pandaScorePlayerCS2Mapper;
 
     public void syncTeamsAndPlayers() {
-        List<PandaScoreTeamDto> teams = pandaScoreClient.fetchTrackedTeams();
-        for (PandaScoreTeamDto dto : teams) {
+        List<PandaScoreTeamRequest> teams = pandaScoreClient.fetchTrackedTeams();
+        for (PandaScoreTeamRequest dto : teams) {
             TeamCS2Entity team = teamCS2Service.createOrUpdate(pandaScoreTeamCS2Mapper.toEntity(dto));
-            for (PandaScorePlayerDto playerDto : dto.players()) {
+            for (PandaScorePlayerRequest playerDto : dto.players()) {
                 PlayerCS2Entity player = pandaScorePlayerCS2Mapper.toEntity(playerDto);
                 player.setTeam(team);
                 playerCS2Service.createOrUpdate(player);

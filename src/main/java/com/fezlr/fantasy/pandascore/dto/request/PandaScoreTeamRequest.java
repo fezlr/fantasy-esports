@@ -1,10 +1,10 @@
-package com.fezlr.fantasy.pandascore.dto;
+package com.fezlr.fantasy.pandascore.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record PandaScoreTeamDto(
+public record PandaScoreTeamRequest(
         @JsonProperty("id") Long pandaScoreId,
 
         @JsonProperty("location") String location,
@@ -15,6 +15,6 @@ public record PandaScoreTeamDto(
 
         @JsonProperty("image_url") String logoUrl,
 
-        @JsonProperty("players") List<PandaScorePlayerDto> players
+        @JsonProperty("players") List<PandaScorePlayerRequest> players
 ) {
 }

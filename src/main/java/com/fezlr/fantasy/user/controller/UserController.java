@@ -20,7 +20,6 @@ public class UserController {
     private final UserMapper userMapper;
     private final UserService userService;
 
-    //TODO: remove required = false in prod!
     @GetMapping("/me")
     public UserResponse getCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
         TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);

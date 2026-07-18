@@ -3,7 +3,7 @@ package com.fezlr.fantasy.pandascore.mapper;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import com.fezlr.fantasy.cs2.team.service.TeamCS2Service;
-import com.fezlr.fantasy.pandascore.dto.PandaScorePlayerDto;
+import com.fezlr.fantasy.pandascore.dto.request.PandaScorePlayerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.time.Instant;
@@ -13,7 +13,7 @@ import java.time.Instant;
 public class PandaScorePlayerCS2Mapper {
     private final TeamCS2Service teamCS2Service;
 
-    public PlayerCS2Entity toEntity(PandaScorePlayerDto dto) {
+    public PlayerCS2Entity toEntity(PandaScorePlayerRequest dto) {
         TeamCS2Entity team = dto.teamId() != null ? teamCS2Service.getBySourceId(dto.teamId()) : null;
 
         return PlayerCS2Entity.builder()

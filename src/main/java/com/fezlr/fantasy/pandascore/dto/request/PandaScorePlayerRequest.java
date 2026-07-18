@@ -1,8 +1,8 @@
-package com.fezlr.fantasy.pandascore.dto;
+package com.fezlr.fantasy.pandascore.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record PandaScorePlayerDto(
+public record PandaScorePlayerRequest(
         //pandascore id
         @JsonProperty("id") Long pandaScoreId,
 

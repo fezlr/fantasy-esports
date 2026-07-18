@@ -31,7 +31,7 @@ public class CardCS2Mapper {
                 .build();
     }
 
-    private CardCS2SummaryResponse toStatisticsSummary(PlayerCS2StatisticEntity statistics) {
+    private CardCS2StatisticsResponse toStatisticsSummary(PlayerCS2StatisticEntity statistics) {
         return CardCS2StatisticsResponse.builder()
                 .seriesCount(statistics.getSeriesCount())
                 .kills(statistics.getKills())
@@ -39,6 +39,7 @@ public class CardCS2Mapper {
                 .assists(statistics.getAssists())
                 .headshots(statistics.getHeadshots())
                 .rating(statistics.getRating())
+                .lastSyncedAt(Instant.now())
                 .build();
     }
 }
