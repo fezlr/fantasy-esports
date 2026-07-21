@@ -32,6 +32,9 @@ public class TeamCS2Entity {
     @Column(name = "panda_score_id", unique = true)
     private Long pandaScoreId;
 
+    @Column(name = "grid_id", unique = true)
+    private Long gridId;
+
     @Builder.Default
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<PlayerCS2Entity> players = new ArrayList<>();

@@ -42,11 +42,11 @@ public class PlayerCS2Entity {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "grid_id")
-    private Long gridId;
-
     @Column(name = "panda_score_id", unique = true)
     private Long pandaScoreId;
+
+    @Column(name = "grid_id", unique = true)
+    private Long gridId;
 
     @Column(name = "last_synced_at", nullable = false)
     private Instant lastSyncedAt;

@@ -1,4 +1,4 @@
-package com.fezlr.fantasy.grid.dto;
+package com.fezlr.fantasy.grid.dto.player_statistics;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

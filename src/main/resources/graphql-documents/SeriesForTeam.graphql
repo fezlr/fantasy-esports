@@ -1,0 +1,16 @@
+query SeriesForTeam($teamId: ID!, $since: DateTime!, $until: DateTime!) {
+    allSeries(
+        first: 50
+        filter: {
+            teamId: $teamId
+            startTimeScheduled: { gte: $since, lte: $until }
+        }
+    ) {
+        edges {
+            node {
+                id
+                startTimeScheduled
+            }
+        }
+    }
+}

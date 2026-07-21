@@ -5,17 +5,29 @@ import com.fezlr.fantasy.cs2.team.dto.response.TeamCS2Response;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import com.fezlr.fantasy.cs2.team.mapper.TeamCS2Mapper;
 import com.fezlr.fantasy.cs2.team.repository.TeamCS2Repository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TeamCS2Service {
     private final TeamCS2Repository teamCS2Repository;
     private final TeamCS2Mapper teamCS2Mapper;
+
+    public List<TeamCS2Response> findAllTeams() {
+        return teamCS2Repository.findAll().stream()
+                .map(teamCS2Mapper::toResponse).toList();
+    }
+
+    public List<TeamCS2Entity> findAll() {
+        return teamCS2Repository.findAll();
+    }
 
     public TeamCS2Entity getBySourceId(Long sourceId) {
         return teamCS2Repository.findByPandaScoreId(sourceId)
@@ -37,8 +49,17 @@ public class TeamCS2Service {
                 });
     }
 
-    public List<TeamCS2Response> findAllTeams() {
-        return teamCS2Repository.findAll().stream()
-                .map(teamCS2Mapper::toResponse).toList();
+    @Transactional
+    public void assignGridIdIfMissing(Long teamId, Long gridTeamId) {
+        TeamCS2Entity entity = teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
+
+        if (entity.getGridId() != null) {
+            log.info("Already exists gridTeamId = {} for teamId = {} and teamName = {}", gridTeamId, teamId, entity.getName());
+            return;
+        }
+
+        entity.setGridId(gridTeamId);
+        teamCS2Repository.save(entity);
+        log.info("Set successfully gridTeamId = {} for teamId = {} and teamName = {}", gridTeamId, teamId, entity.getName());
     }
 }

@@ -1,6 +1,6 @@
 package com.fezlr.fantasy.grid.validator;
 
-import com.fezlr.fantasy.grid.dto.CS2PlayerSeriesStatisticsDto;
+import com.fezlr.fantasy.grid.dto.player_statistics.CS2PlayerSeriesStatisticsDto;
 import org.springframework.stereotype.Component;
 
 @Component

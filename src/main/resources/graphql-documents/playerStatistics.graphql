@@ -1,5 +1,5 @@
-query {
-  playerStatistics(playerId: "10940", filter: { timeWindow: LAST_3_MONTHS }) {
+query GetPlayerStats($playerId: ID!) {
+  playerStatistics(playerId: $playerId, filter: { timeWindow: LAST_3_MONTHS }) {
     id
     series {
       ... on Cs2PlayerSeriesStatistics {

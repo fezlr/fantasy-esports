@@ -1,6 +1,8 @@
 package com.fezlr.fantasy.grid.client;
 
-import com.fezlr.fantasy.grid.dto.CS2PlayerSeriesStatisticsDto;
+import com.fezlr.fantasy.grid.dto.player_search.PlayerSearchDto;
+import com.fezlr.fantasy.grid.dto.player_statistics.CS2PlayerSeriesStatisticsDto;
+import com.fezlr.fantasy.grid.dto.series_state.SeriesStateDto;
 import com.fezlr.fantasy.grid.validator.GridValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,17 +10,25 @@ import org.springframework.graphql.client.FieldAccessException;
 import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
+import com.fezlr.fantasy.grid.dto.series.SeriesSummaryDto;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.graphql.client.ClientGraphQlResponse;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class GridClient {
-    private final HttpGraphQlClient gridGraphQlClient;
+    private final HttpGraphQlClient baseGraphQlClient;
+    private final HttpGraphQlClient statsGraphQlClient;
     private final GridValidator gridValidator;
 
     public Optional<CS2PlayerSeriesStatisticsDto> fetchPlayerStats(String gridId) {
         try {
-            CS2PlayerSeriesStatisticsDto dto = gridGraphQlClient
+            CS2PlayerSeriesStatisticsDto dto = baseGraphQlClient
                     .documentName("playerStatistics")
                     .variable("playerId", gridId)
                     .retrieveSync("playerStatistics.series")
@@ -26,13 +36,110 @@ public class GridClient {
 
             return Optional.ofNullable(dto)
                     .filter(gridValidator::hasMatchData);
-        } catch(FieldAccessException e) {
+        } catch (FieldAccessException e) {
             log.error("GRID field failed for a player's gridId = {}: {}", gridId, e.getMessage());
             return Optional.empty();
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("GRID failed for a player's gridId = {}: {}", gridId, e.getMessage());
             return Optional.empty();
         }
-
     }
+
+    public List<PlayerSearchDto> findPlayerByNickname(String nickname) {
+        try {
+            return baseGraphQlClient
+                    .documentName("FindPlayerByNickname")
+                    .variable("nickname", nickname)
+                    .retrieveSync("players.edges")
+                    .toEntityList(PlayerEdgeWrapper.class)
+                    .stream()
+                    .map(PlayerEdgeWrapper::node)
+                    .toList();
+        } catch (Exception e) {
+            log.error("GRID failed for nickname = {}: {}", nickname, e.getMessage());
+            return List.of();
+        }
+    }
+
+    public List<SeriesSummaryDto> fetchSeriesForTeam(Long teamId, Instant since, Instant until) {
+        try {
+            return baseGraphQlClient
+                    .documentName("seriesForTeam")
+                    .variable("teamId", teamId)
+                    .variable("since", since.toString())
+                    .variable("until", until.toString())
+                    .retrieveSync("allSeries.edges")
+                    .toEntityList(SeriesEdgeWrapper.class)
+                    .stream()
+                    .map(SeriesEdgeWrapper::node)
+                    .toList();
+        } catch (Exception e) {
+            log.error("GRID failed for teamId = {}: {}", teamId, e.getMessage());
+            return List.of();
+        }
+    }
+
+    public Map<Long, SeriesStateDto> fetchSeriesStates(List<Long> seriesIds) {
+        if (seriesIds.isEmpty()) {
+            return Map.of();
+        }
+
+        StringBuilder query = new StringBuilder("query BatchSeriesState {\n");
+        Map<String, Long> aliasToSeriesId = new LinkedHashMap<>();
+
+        for (int i = 0; i < seriesIds.size(); i++) {
+            String alias = "s" + i;
+            aliasToSeriesId.put(alias, seriesIds.get(i));
+            query.append("  ").append(alias)
+                    .append(": seriesState(id: \"").append(seriesIds.get(i)).append("\") {\n")
+                    .append("    games {\n")
+                    .append("      teams {\n")
+                    .append("        players {\n")
+                    .append("          id\n")
+                    .append("          kills\n")
+                    .append("          killAssistsGiven\n")
+                    .append("          killAssistsReceived\n")
+                    .append("          deaths\n")
+                    .append("          ... on GamePlayerStateCs2 {\n")
+                    .append("            damageDealt\n")
+                    .append("            damageTaken\n")
+                    .append("            headshots\n")
+                    .append("          }\n")
+                    .append("        }\n")
+                    .append("      }\n")
+                    .append("    }\n")
+                    .append("  }\n");
+        }
+        query.append("}");
+
+        try {
+            ClientGraphQlResponse response = baseGraphQlClient.document(query.toString()).executeSync();
+
+            if (!response.isValid()) {
+                log.error("GRID batch seriesState failed: {}", response.getErrors());
+                return Map.of();
+            }
+
+            Map<String, SeriesStateDto> byAlias = response.toEntity(
+                    new ParameterizedTypeReference<>() {}
+            );
+
+            Map<Long, SeriesStateDto> bySeriesId = new LinkedHashMap<>();
+            byAlias.forEach((alias, state) -> {
+                Long seriesId = aliasToSeriesId.get(alias);
+                if (seriesId != null) {
+                    bySeriesId.put(seriesId, state);
+                }
+            });
+
+            return bySeriesId;
+        } catch (Exception e) {
+            log.error("GRID batch seriesState failed for {} series: {}", seriesIds.size(), e.getMessage());
+            return Map.of();
+        }
+    }
+
+    private record PlayerEdgeWrapper(PlayerSearchDto node) {}
+
+    private record SeriesEdgeWrapper(SeriesSummaryDto node) {}
 }

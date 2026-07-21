@@ -1,4 +1,4 @@
-package com.fezlr.fantasy.grid.dto;
+package com.fezlr.fantasy.grid.dto.stats;
 
 import lombok.Builder;
 

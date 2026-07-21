@@ -1,0 +1,14 @@
+query FindPlayerByNickname($nickname: String!) {
+    players(filter: { nickname: { contains: $nickname } }, first: 5) {
+        edges {
+            node {
+                id
+                nickname
+                team {
+                    id
+                    name
+                }
+            }
+        }
+    }
+}
