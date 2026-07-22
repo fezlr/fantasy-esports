@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.pandascore.client;
 
+import com.fezlr.fantasy.cs2.team.enums.TrackedTeam;
 import com.fezlr.fantasy.pandascore.config.PandaScoreClientConfig;
 import com.fezlr.fantasy.pandascore.dto.request.PandaScoreTeamRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,12 @@ import java.util.stream.Collectors;
 public class PandaScoreClient {
     @Value("${pandascore.api-key}")
     private String apiKey;
-    @Value("${pandascore.tracked-team-ids}")
-    private List<Long> trackedTeamIds;
     private final PandaScoreClientConfig pandaScoreClientConfig;
 
     public List<PandaScoreTeamRequest> fetchTrackedTeams() {
-        String idsParam = trackedTeamIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        String idsParam = TrackedTeam.getAllPandaScoreIds();
 
-        log.info("TrackedTeamIds: {}", trackedTeamIds);
         log.info("idsParam: {}", idsParam);
-        log.info("TrackedTeamIds SIZE: {}", trackedTeamIds.size());
         log.info("idsParam LENGTH: {}", idsParam.length());
 
         return pandaScoreClientConfig.pandaScoreRestClient().get()

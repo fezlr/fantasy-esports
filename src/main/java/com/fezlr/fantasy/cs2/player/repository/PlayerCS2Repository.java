@@ -12,4 +12,6 @@ public interface PlayerCS2Repository extends JpaRepository<PlayerCS2Entity, Long
     List<PlayerCS2Entity> findAllByGridIdIsNotNull();
 
     List<PlayerCS2Entity> findAllByGridIdIsNull();
+
+    Optional<PlayerCS2Entity> findBySteamId(Long steamId);
 }

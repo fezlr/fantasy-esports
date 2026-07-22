@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record TeamRefDto(
         Long id,
-        String name
+        String name,
+        String logoUrl
 ) {
 }

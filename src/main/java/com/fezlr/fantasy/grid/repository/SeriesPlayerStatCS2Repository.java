@@ -15,17 +15,17 @@ public interface SeriesPlayerStatCS2Repository extends JpaRepository<SeriesPlaye
 
     @Query("""
             SELECT new com.fezlr.fantasy.grid.dto.stats.PlayerAggregateStats(
-                s.gridPlayerId,
+                s.steamId,
                 COUNT(DISTINCT s.seriesId),
                 SUM(s.kills),
                 SUM(s.deaths)
             )
             FROM SeriesPlayerStatCS2Entity s
-            WHERE s.gridPlayerId = :gridPlayerId
+            WHERE s.steamId = :steamId
               AND s.seriesStartedAt >= :since
-            GROUP BY s.gridPlayerId
+            GROUP BY s.steamId
             """)
-    Optional<PlayerAggregateStats> aggregateForPlayer(@Param("gridPlayerId") Long gridPlayerId, @Param("since") Instant since);
+    Optional<PlayerAggregateStats> aggregateForPlayer(@Param("steamId") Long steamId, @Param("since") Instant since);
 
     boolean existsBySeriesId(Long seriesId);
 

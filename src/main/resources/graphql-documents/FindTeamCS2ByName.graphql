@@ -1,0 +1,17 @@
+query FindTeamCS2ByName($teamName: String!) {
+    teams(
+        filter: {
+            name: { contains: $teamName }
+            titleId: "2"
+        }
+        first: 20
+    ) {
+        edges {
+            node {
+                id
+                name
+                logoUrl
+            }
+        }
+    }
+}

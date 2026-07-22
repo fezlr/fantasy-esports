@@ -12,7 +12,6 @@ import java.time.Instant;
 @Table(name = "series_player_stats_cs2", uniqueConstraints = @UniqueConstraint(columnNames = {"series_id", "game_number", "grid_player_id"}))
 @Entity
 public class SeriesPlayerStatCS2Entity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,8 +22,8 @@ public class SeriesPlayerStatCS2Entity {
     @Column(name = "game_number", nullable = false)
     private Integer gameNumber;
 
-    @Column(name = "grid_player_id", nullable = false)
-    private Long gridPlayerId;
+    @Column(name = "steamId", nullable = false)
+    private Long steamId;
 
     @Column(nullable = false)
     private Integer kills;

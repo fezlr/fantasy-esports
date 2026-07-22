@@ -21,12 +21,9 @@ public class CS2SyncJob {
         //pandascore api
         pandaScoreSyncJob.syncTeamsAndPlayers();
 
-
-
-
         //grid api
-//        gridSyncJob.syncMissingGridIdPlayersAndTeams();
-//        gridSyncJob.syncTeamsAndPlayers();
+        gridSyncJob.syncMissingGridIdPlayers();
+        gridSyncJob.syncMissingGridIdTeams();
 
         log.info("Ending syncAll...");
     }

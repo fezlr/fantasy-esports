@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record PlayerGameStateDto(
-        @JsonProperty("id") Long gridId,
+        @JsonProperty("id") Long steamId,
         Integer kills,
         Integer killAssistsGiven,
         Integer killAssistsReceived,

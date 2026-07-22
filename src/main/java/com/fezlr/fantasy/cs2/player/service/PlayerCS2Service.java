@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,17 +38,21 @@ public class PlayerCS2Service {
     }
 
     @Transactional
-    public void assignGridId(Long id, Long gridId) {
-        PlayerCS2Entity entity = playerCS2Repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Player is not found"));
+    public void assignGridIdAndSetSteamId(Long id, Long gridId, Long steamId) {
+        PlayerCS2Entity entity = playerCS2Repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Player is not found"));
 
-        if (entity.getGridId() != null) {
-            log.info("Already exists gridId = {} for playerId = {} and playerNickname = {}", gridId, id, entity.getNickname());
-            return;
+        if (entity.getGridId() == null) {
+            entity.setGridId(gridId);
         }
 
-        entity.setGridId(gridId);
+        if (entity.getSteamId() == null && steamId != null) {
+            entity.setSteamId(steamId);
+        }
+
         playerCS2Repository.save(entity);
-        log.info("Set successfully gridId = {} for playerId = {} and playerNickname = {}", gridId, id, entity.getNickname());
+
+        log.info("Player updated: playerId={}, nickname={}, gridId={}, steamId={}", id, entity.getNickname(), entity.getGridId(), entity.getSteamId());
     }
 
     @Transactional

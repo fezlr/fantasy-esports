@@ -26,21 +26,21 @@ public class SeriesBackfillService {
     private final GridSeriesStatMapper gridSeriesStatMapper;
     private final SeriesPlayerStatCS2Repository seriesPlayerStatCS2Repository;
 
-    public void syncTeam(Long teamId, Instant fallbackSince) {
+    public void syncTeam(Long teamGridId, Instant fallbackSince) {
         Instant since = seriesPlayerStatCS2Repository.findLatestSeriesStartedAt()
                 .map(latest -> latest.minus(1, ChronoUnit.DAYS))
                 .orElse(fallbackSince);
 
         Instant until = Instant.now();
 
-        List<SeriesSummaryDto> series = gridClient.fetchSeriesForTeam(teamId, since, until);
+        List<SeriesSummaryDto> series = gridClient.fetchSeriesForTeam(teamGridId, since, until);
 
         List<SeriesSummaryDto> newSeries = series.stream()
                 .filter(s -> !seriesPlayerStatCS2Repository.existsBySeriesId(s.id()))
                 .toList();
 
         if (newSeries.isEmpty()) {
-            log.info("There are no new series for teamId={}", teamId);
+            log.info("There are no new series for teamGridId={}", teamGridId);
             return;
         }
 
@@ -57,7 +57,7 @@ public class SeriesBackfillService {
             saveAllStats(entities);
         }
 
-        log.info("Synced {} new series for teamId={}", newSeries.size(), teamId);
+        log.info("Synced {} new series for teamGridId={}", newSeries.size(), teamGridId);
     }
 
     @Transactional

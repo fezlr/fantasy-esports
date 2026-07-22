@@ -42,6 +42,9 @@ public class PlayerCS2Entity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "steam_id", unique = true)
+    private Long steamId;
+
     @Column(name = "panda_score_id", unique = true)
     private Long pandaScoreId;
 

@@ -1,4 +1,4 @@
-query SeriesForTeam($teamId: ID!, $since: DateTime!, $until: DateTime!) {
+query SeriesForTeam($teamId: ID!, $since: String!, $until: String!) {
     allSeries(
         first: 50
         filter: {

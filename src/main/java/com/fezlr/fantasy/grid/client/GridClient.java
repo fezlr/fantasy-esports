@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.grid.client;
 
 import com.fezlr.fantasy.grid.dto.player_search.PlayerSearchDto;
+import com.fezlr.fantasy.grid.dto.player_search.TeamRefDto;
 import com.fezlr.fantasy.grid.dto.player_statistics.CS2PlayerSeriesStatisticsDto;
 import com.fezlr.fantasy.grid.dto.series_state.SeriesStateDto;
 import com.fezlr.fantasy.grid.validator.GridValidator;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Component
 public class GridClient {
     private final HttpGraphQlClient baseGraphQlClient;
-    private final HttpGraphQlClient statsGraphQlClient;
+    private final HttpGraphQlClient liveGraphQlClient;
     private final GridValidator gridValidator;
 
     public Optional<CS2PlayerSeriesStatisticsDto> fetchPlayerStats(String gridId) {
@@ -49,7 +50,7 @@ public class GridClient {
         try {
             return baseGraphQlClient
                     .documentName("FindPlayerByNickname")
-                    .variable("nickname", nickname)
+                    .variable("nickname", nickname.strip())
                     .retrieveSync("players.edges")
                     .toEntityList(PlayerEdgeWrapper.class)
                     .stream()
@@ -61,11 +62,27 @@ public class GridClient {
         }
     }
 
-    public List<SeriesSummaryDto> fetchSeriesForTeam(Long teamId, Instant since, Instant until) {
+    public List<TeamRefDto> findTeamCS2ByName(String teamName) {
         try {
             return baseGraphQlClient
-                    .documentName("seriesForTeam")
-                    .variable("teamId", teamId)
+                    .documentName("FindTeamCS2ByName")
+                    .variable("teamName", teamName.strip())
+                    .retrieveSync("teams.edges")
+                    .toEntityList(TeamEdgeWrapper.class)
+                    .stream()
+                    .map(TeamEdgeWrapper::node)
+                    .toList();
+        } catch (Exception e) {
+            log.error("GRID failed for teamName = {}: {}", teamName, e.getMessage());
+            return List.of();
+        }
+    }
+
+    public List<SeriesSummaryDto> fetchSeriesForTeam(Long teamGridId, Instant since, Instant until) {
+        try {
+            return baseGraphQlClient
+                    .documentName("SeriesForTeam")
+                    .variable("teamId", teamGridId)
                     .variable("since", since.toString())
                     .variable("until", until.toString())
                     .retrieveSync("allSeries.edges")
@@ -74,7 +91,7 @@ public class GridClient {
                     .map(SeriesEdgeWrapper::node)
                     .toList();
         } catch (Exception e) {
-            log.error("GRID failed for teamId = {}: {}", teamId, e.getMessage());
+            log.error("GRID failed for teamGridId = {}: {}", teamGridId, e.getMessage());
             return List.of();
         }
     }
@@ -113,7 +130,7 @@ public class GridClient {
         query.append("}");
 
         try {
-            ClientGraphQlResponse response = baseGraphQlClient.document(query.toString()).executeSync();
+            ClientGraphQlResponse response = liveGraphQlClient.document(query.toString()).executeSync();
 
             if (!response.isValid()) {
                 log.error("GRID batch seriesState failed: {}", response.getErrors());
@@ -140,6 +157,8 @@ public class GridClient {
     }
 
     private record PlayerEdgeWrapper(PlayerSearchDto node) {}
+
+    private record TeamEdgeWrapper(TeamRefDto node) {}
 
     private record SeriesEdgeWrapper(SeriesSummaryDto node) {}
 }

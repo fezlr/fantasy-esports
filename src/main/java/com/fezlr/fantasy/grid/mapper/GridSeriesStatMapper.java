@@ -48,7 +48,7 @@ public class GridSeriesStatMapper {
         return SeriesPlayerStatCS2Entity.builder()
                 .seriesId(seriesId)
                 .gameNumber(gameNumber)
-                .gridPlayerId(player.gridId())
+                .steamId(player.steamId())
                 .kills(nullToZero(player.kills()))
                 .deaths(nullToZero(player.deaths()))
                 .seriesStartedAt(startedAt)

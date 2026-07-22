@@ -17,6 +17,11 @@ public class GridConfig {
     @Value("${grid.stats-url}")
     private String statsUrl;
 
+    @Value("${grid.live-url}")
+    private String liveUrl;
+
+
+
     @Bean(name = "baseGraphQlClient")
     public HttpGraphQlClient baseGraphQlClient() {
         WebClient webClient = WebClient.builder()
@@ -31,6 +36,16 @@ public class GridConfig {
     public HttpGraphQlClient statsGraphQlClient() {
         WebClient webClient = WebClient.builder()
                 .baseUrl(statsUrl)
+                .defaultHeader("x-api-key", apiKey)
+                .build();
+
+        return HttpGraphQlClient.builder(webClient).build();
+    }
+
+    @Bean(name = "liveGraphQlClient")
+    public HttpGraphQlClient liveGraphQlClient() {
+        WebClient webClient = WebClient.builder()
+                .baseUrl(liveUrl)
                 .defaultHeader("x-api-key", apiKey)
                 .build();
 

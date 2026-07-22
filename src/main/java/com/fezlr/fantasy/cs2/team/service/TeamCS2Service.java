@@ -51,15 +51,23 @@ public class TeamCS2Service {
 
     @Transactional
     public void assignGridIdIfMissing(Long teamId, Long gridTeamId) {
-        TeamCS2Entity entity = teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
+        TeamCS2Entity entity = teamCS2Repository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team is not found"));
 
-        if (entity.getGridId() != null) {
-            log.info("Already exists gridTeamId = {} for teamId = {} and teamName = {}", gridTeamId, teamId, entity.getName());
-            return;
+        if (entity.getGridId() == null) {
+            entity.setGridId(gridTeamId);
         }
 
-        entity.setGridId(gridTeamId);
         teamCS2Repository.save(entity);
-        log.info("Set successfully gridTeamId = {} for teamId = {} and teamName = {}", gridTeamId, teamId, entity.getName());
+
+        log.info("Player updated: teamId={}, name={}, gridId={}", teamId, entity.getName(), entity.getGridId());
+    }
+
+    public TeamCS2Entity findById(Long teamId) {
+        return teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
+    }
+
+    public List<TeamCS2Entity> findAllWithoutGridId() {
+        return teamCS2Repository.findAllByGridIdIsNull();
     }
 }
