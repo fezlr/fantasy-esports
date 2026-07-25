@@ -41,9 +41,6 @@ public class PlayerGridIdResolutionService {
 
         for (PlayerCS2Entity player : players) {
             try {
-                //TODO: find a better solution for single threading
-                Thread.sleep(3500);
-
                 resolveOne(player.getId());
             } catch (Exception e) {
                 log.error("Failed resolving gridId for playerId={} nickname={}: {}",

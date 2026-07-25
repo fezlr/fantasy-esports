@@ -67,6 +67,16 @@ public class TeamCS2Service {
         return teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
     }
 
+    public TeamCS2Entity findByGridId(Long teamGridId) {
+        return teamCS2Repository.findByGridId(teamGridId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
+    }
+
+    public void updateLastSeriesSyncedAt(Long teamId, Instant timestamp) {
+        TeamCS2Entity team = findById(teamId);
+        team.setLastSeriesSyncedAt(timestamp);
+        teamCS2Repository.save(team);
+    }
+
     public List<TeamCS2Entity> findAllWithoutGridId() {
         return teamCS2Repository.findAllByGridIdIsNull();
     }

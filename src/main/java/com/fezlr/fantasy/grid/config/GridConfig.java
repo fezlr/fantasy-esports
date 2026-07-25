@@ -14,28 +14,13 @@ public class GridConfig {
     @Value("${grid.base-url}")
     private String baseUrl;
 
-    @Value("${grid.stats-url}")
-    private String statsUrl;
-
     @Value("${grid.live-url}")
     private String liveUrl;
-
-
 
     @Bean(name = "baseGraphQlClient")
     public HttpGraphQlClient baseGraphQlClient() {
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)
-                .defaultHeader("x-api-key", apiKey)
-                .build();
-
-        return HttpGraphQlClient.builder(webClient).build();
-    }
-
-    @Bean(name = "statsGraphQlClient")
-    public HttpGraphQlClient statsGraphQlClient() {
-        WebClient webClient = WebClient.builder()
-                .baseUrl(statsUrl)
                 .defaultHeader("x-api-key", apiKey)
                 .build();
 

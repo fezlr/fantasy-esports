@@ -2,15 +2,11 @@ package com.fezlr.fantasy.grid.client;
 
 import com.fezlr.fantasy.grid.dto.player_search.PlayerSearchDto;
 import com.fezlr.fantasy.grid.dto.player_search.TeamRefDto;
-import com.fezlr.fantasy.grid.dto.player_statistics.CS2PlayerSeriesStatisticsDto;
 import com.fezlr.fantasy.grid.dto.series_state.SeriesStateDto;
-import com.fezlr.fantasy.grid.validator.GridValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.graphql.client.FieldAccessException;
 import org.springframework.graphql.client.HttpGraphQlClient;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 import com.fezlr.fantasy.grid.dto.series.SeriesSummaryDto;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.graphql.client.ClientGraphQlResponse;
@@ -25,29 +21,11 @@ import java.util.Map;
 public class GridClient {
     private final HttpGraphQlClient baseGraphQlClient;
     private final HttpGraphQlClient liveGraphQlClient;
-    private final GridValidator gridValidator;
-
-    public Optional<CS2PlayerSeriesStatisticsDto> fetchPlayerStats(String gridId) {
-        try {
-            CS2PlayerSeriesStatisticsDto dto = baseGraphQlClient
-                    .documentName("playerStatistics")
-                    .variable("playerId", gridId)
-                    .retrieveSync("playerStatistics.series")
-                    .toEntity(CS2PlayerSeriesStatisticsDto.class);
-
-            return Optional.ofNullable(dto)
-                    .filter(gridValidator::hasMatchData);
-        } catch (FieldAccessException e) {
-            log.error("GRID field failed for a player's gridId = {}: {}", gridId, e.getMessage());
-            return Optional.empty();
-        } catch (Exception e) {
-            log.error("GRID failed for a player's gridId = {}: {}", gridId, e.getMessage());
-            return Optional.empty();
-        }
-    }
+    private final GridRateLimiter gridRateLimiter;
 
     public List<PlayerSearchDto> findPlayerByNickname(String nickname) {
         try {
+            gridRateLimiter.acquire();
             return baseGraphQlClient
                     .documentName("FindPlayerByNickname")
                     .variable("nickname", nickname.strip())
@@ -64,6 +42,7 @@ public class GridClient {
 
     public List<TeamRefDto> findTeamCS2ByName(String teamName) {
         try {
+            gridRateLimiter.acquire();
             return baseGraphQlClient
                     .documentName("FindTeamCS2ByName")
                     .variable("teamName", teamName.strip())
@@ -80,6 +59,7 @@ public class GridClient {
 
     public List<SeriesSummaryDto> fetchSeriesForTeam(Long teamGridId, Instant since, Instant until) {
         try {
+            gridRateLimiter.acquire();
             return baseGraphQlClient
                     .documentName("SeriesForTeam")
                     .variable("teamId", teamGridId)
@@ -115,9 +95,12 @@ public class GridClient {
                     .append("          id\n")
                     .append("          kills\n")
                     .append("          killAssistsGiven\n")
-                    .append("          killAssistsReceived\n")
                     .append("          deaths\n")
+                    .append("          teamkills\n")
+                    .append("          selfkills\n")
+
                     .append("          ... on GamePlayerStateCs2 {\n")
+                    .append("            name\n")
                     .append("            damageDealt\n")
                     .append("            damageTaken\n")
                     .append("            headshots\n")
@@ -130,6 +113,7 @@ public class GridClient {
         query.append("}");
 
         try {
+            gridRateLimiter.acquire();
             ClientGraphQlResponse response = liveGraphQlClient.document(query.toString()).executeSync();
 
             if (!response.isValid()) {

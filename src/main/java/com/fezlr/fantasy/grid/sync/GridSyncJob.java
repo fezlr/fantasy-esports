@@ -18,28 +18,44 @@ public class GridSyncJob {
     private final PlayerStatisticsAggregationService playerStatisticsAggregationService;
 
 //    @Scheduled(cron = "0 0 5 * * *")
-//    public void syncTeamsAndPlayers() {
-//        log.info("Starting GRID sync..");
-//
-//        gridBackfillOrchestratorService.syncAllTeams();
-//        playerStatisticsAggregationService.recalculateAll();
-//
-//        log.info("Ending GRID sync..");
-//    }
+    public void syncTeamsAndPlayers() {
+        log.info("Starting GRID sync..");
+
+//        syncTeamSeries();
+//        calculatePlayerStatistics();
+
+        log.info("Ending GRID sync..");
+    }
+
+    public void syncTeamSeries() {
+        log.info("Starting syncing new series for teams");
+
+        gridBackfillOrchestratorService.syncAllTeams();
+
+        log.info("Ending syncing new series for teams");
+    }
+
+    public void calculatePlayerStatistics() {
+        log.info("Starting calculating player's statistics");
+
+        playerStatisticsAggregationService.recalculateAll();
+
+        log.info("Ending calculating player's statistics");
+    }
 
     public void syncMissingGridIdPlayers() {
-        log.info("Starting sync missing gridId players");
+        log.info("Starting syncing missing gridId players");
 
         playerGridIdResolutionService.resolveAllMissing();
 
-        log.info("Ending sync missing gridId players");
+        log.info("Ending syncing missing gridId players");
     }
 
     public void syncMissingGridIdTeams() {
-        log.info("Starting sync missing gridId teams");
+        log.info("Starting syncing missing gridId teams");
 
         teamGridIdResolutionService.resolveAllMissing();
 
-        log.info("Ending sync missing gridId teams");
+        log.info("Ending syncing missing gridId teams");
     }
 }

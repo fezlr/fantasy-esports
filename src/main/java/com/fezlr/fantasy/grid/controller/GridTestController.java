@@ -1,8 +1,8 @@
 package com.fezlr.fantasy.grid.controller;
 
+import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import com.fezlr.fantasy.cs2.team.service.TeamCS2Service;
-import com.fezlr.fantasy.grid.dto.player_statistics.CS2PlayerSeriesStatisticsDto;
 import com.fezlr.fantasy.grid.service.PlayerGridIdResolutionService;
 import com.fezlr.fantasy.grid.service.PlayerStatisticsAggregationService;
 import com.fezlr.fantasy.grid.service.SeriesBackfillService;
@@ -17,7 +17,6 @@ import java.util.Optional;
 @RequestMapping("/api/v1/_test/grid")
 @RequiredArgsConstructor
 public class GridTestController {
-    private final HttpGraphQlClient baseGraphQlClient;
     private final PlayerGridIdResolutionService playerGridIdResolutionService;
     private final TeamCS2Service teamCS2Service;
     private final SeriesBackfillService seriesBackfillService;
@@ -37,23 +36,12 @@ public class GridTestController {
         return "synced";
     }
 
-    @PostMapping("/aggregate")
-    public String aggregate() {
-        playerStatisticsAggregationService.recalculateAll();
+    @PostMapping("/aggregate/{playerId}")
+    public String aggregate(@PathVariable Long playerId) {
+        playerStatisticsAggregationService.recalculateOne(playerId);
         return "aggregated";
     }
 
-
-    @GetMapping("/player-stats")
-    public CS2PlayerSeriesStatisticsDto testPlayerStats(
-//            @PathVariable String playerId
-    ) {
-        return baseGraphQlClient
-                .documentName("playerStatistics")
-//                .variable("playerId", playerId)
-                .retrieveSync("playerStatistics.series")
-                .toEntity(CS2PlayerSeriesStatisticsDto.class);
-    }
 
     @PostMapping("/resolve/{playerId}")
     public Optional<Long> resolvePlayer(@PathVariable Long playerId) {

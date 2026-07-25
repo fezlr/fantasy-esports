@@ -43,9 +43,6 @@ public class TeamGridIdResolutionService {
 
         for (TeamCS2Entity team : teams) {
             try {
-                //TODO: find a better solution for single threading
-                Thread.sleep(3500);
-
                 resolveOne(team.getId());
             } catch (Exception e) {
                 log.error("Failed resolving gridId for playerId={} nickname={}: {}",

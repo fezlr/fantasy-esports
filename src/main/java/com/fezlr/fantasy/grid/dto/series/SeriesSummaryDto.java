@@ -6,6 +6,7 @@ import java.time.Instant;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SeriesSummaryDto(
         Long id,
-        Instant startTimeScheduled
+        Instant startTimeScheduled,
+        TournamentSeriesDto tournament
 ) {
 }

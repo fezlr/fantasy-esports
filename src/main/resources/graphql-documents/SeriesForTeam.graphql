@@ -10,6 +10,9 @@ query SeriesForTeam($teamId: ID!, $since: String!, $until: String!) {
             node {
                 id
                 startTimeScheduled
+                tournament {
+                    name
+                }
             }
         }
     }

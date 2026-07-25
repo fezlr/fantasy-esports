@@ -16,9 +16,11 @@ public interface SeriesPlayerStatCS2Repository extends JpaRepository<SeriesPlaye
     @Query("""
             SELECT new com.fezlr.fantasy.grid.dto.stats.PlayerAggregateStats(
                 s.steamId,
-                COUNT(DISTINCT s.seriesId),
-                SUM(s.kills),
-                SUM(s.deaths)
+                CAST(COUNT(DISTINCT s.seriesId) AS integer),
+                CAST(SUM(s.kills) AS integer),
+                CAST(SUM(s.killAssistsGiven) AS integer),
+                CAST(SUM(s.deaths) AS integer),
+                CAST(SUM(s.headshots) AS integer)
             )
             FROM SeriesPlayerStatCS2Entity s
             WHERE s.steamId = :steamId

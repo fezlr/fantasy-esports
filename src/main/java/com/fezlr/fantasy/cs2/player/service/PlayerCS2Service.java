@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,8 +28,8 @@ public class PlayerCS2Service {
                 .map(playerCS2Mapper::toResponse).toList();
     }
 
-    public List<PlayerCS2Entity> findAllByGridIdIsNotNull() {
-        return playerCS2Repository.findAllByGridIdIsNotNull();
+    public List<PlayerCS2Entity> findAllBySteamIdIsNotNull() {
+        return playerCS2Repository.findAllBySteamIdIsNotNull();
     }
 
     public List<PlayerCS2Entity> findAllWithoutGridId() {

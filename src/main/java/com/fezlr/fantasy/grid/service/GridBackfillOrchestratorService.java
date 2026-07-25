@@ -28,9 +28,9 @@ public class GridBackfillOrchestratorService {
             }
 
             try {
-                seriesBackfillService.syncTeam(team.getGridId(), fallbackSince);
+                seriesBackfillService.syncTeam(team.getId(), fallbackSince);
             } catch (Exception e) {
-                log.error("Failed syncing teamId={} ({}): {}", team.getId(), team.getName(), e.getMessage());
+                log.error("Failed syncing teamGridId={}, teamName={}: {}", team.getGridId(), team.getName(), e.getMessage());
             }
         }
     }

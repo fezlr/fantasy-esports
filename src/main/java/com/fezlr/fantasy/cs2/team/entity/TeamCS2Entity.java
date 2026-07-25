@@ -39,6 +39,9 @@ public class TeamCS2Entity {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<PlayerCS2Entity> players = new ArrayList<>();
 
+    @Column(name = "last_series_synced_at")
+    private Instant lastSeriesSyncedAt;
+
     @Column(name = "last_synced_at", nullable = false)
     private Instant lastSyncedAt;
 }
