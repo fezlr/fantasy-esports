@@ -6,7 +6,7 @@ import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
 import com.fezlr.fantasy.grid.dto.stats.PlayerAggregateStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -23,6 +23,7 @@ public class PlayerStatisticsAggregationService {
     private static final int LOOK_BACK_DAYS = 90;
     private final PlayerCS2Service playerCS2Service;
     private final SeriesPlayerStatCS2Service seriesPlayerStatCS2Service;
+    private final ObjectProvider<PlayerStatisticsAggregationService> selfProvider;
 
     /*
      * Finding aggregate stats for a single player and applying them
@@ -46,10 +47,11 @@ public class PlayerStatisticsAggregationService {
      */
     public void recalculateAll() {
         List<PlayerCS2Entity> players = playerCS2Service.findAllBySteamIdIsNotNull();
+        PlayerStatisticsAggregationService self = selfProvider.getObject();
 
         for (PlayerCS2Entity player : players) {
             try {
-                recalculateOne(player.getId());
+                self.recalculateOne(player.getId());
             } catch (Exception e) {
                 log.error("Failed recalculating stats for playerId={} nickname={}: {}",
                         player.getId(), player.getNickname(), e.getMessage());

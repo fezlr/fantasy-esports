@@ -23,6 +23,9 @@ public class TeamCS2Entity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "vrs_points")
+    private Integer vrsPoints;
+
     @Column(name = "valve_rank")
     private Integer valveRank;
 

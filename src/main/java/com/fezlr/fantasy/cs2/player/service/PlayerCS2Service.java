@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -76,6 +77,11 @@ public class PlayerCS2Service {
                     newPlayerInfoEntity.setLastSyncedAt(Instant.now());
                     return playerCS2Repository.save(newPlayerInfoEntity);
                 });
+    }
+
+    //TODO refactor: steamId
+    public Optional<PlayerCS2Entity> findBySteamId(Long steamId) {
+        return playerCS2Repository.findBySteamId(steamId);
     }
 
     @Transactional

@@ -21,16 +21,34 @@ public class PlayerGridIdResolutionService {
 
     /*
      * Finding player CS2 and setting grid id
+     * TODO refactor: steamId
      */
     public Optional<Long> resolveOne(Long playerId) {
         PlayerCS2Entity player = playerCS2Service.findById(playerId);
         List<PlayerSearchDto> candidates = gridClient.findPlayerByNickname(player.getNickname());
         Optional<PlayerSearchDto> match = gridPlayerMatcher.matchExact(candidates, player.getNickname());
 
-        match.ifPresent(dto ->
-                playerCS2Service.assignGridIdAndSetSteamId(player.getId(), dto.id(), dto.steamId().orElse(null)));
+        if (match.isEmpty()) {
+            return Optional.empty();
+        }
 
-        return match.map(PlayerSearchDto::id);
+        PlayerSearchDto dto = match.get();
+        Long steamId = dto.steamId().orElse(null);
+
+        if (steamId != null) {
+            Optional<PlayerCS2Entity> conflict = playerCS2Service.findBySteamId(steamId);
+
+            if (conflict.isPresent() && !conflict.get().getId().equals(player.getId())) {
+                log.warn("steamId={} already belongs to playerId={} nickname={} — skipping playerId={} nickname={}, likely a duplicate PandaScore record",
+                        steamId, conflict.get().getId(), conflict.get().getNickname(), player.getId(), player.getNickname());
+
+                return Optional.empty();
+            }
+        }
+
+        playerCS2Service.assignGridIdAndSetSteamId(player.getId(), dto.id(), steamId);
+
+        return Optional.of(dto.id());
     }
 
     /*

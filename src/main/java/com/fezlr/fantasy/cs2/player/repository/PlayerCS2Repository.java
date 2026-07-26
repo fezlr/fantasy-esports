@@ -9,8 +9,9 @@ public interface PlayerCS2Repository extends JpaRepository<PlayerCS2Entity, Long
 
     Optional<PlayerCS2Entity> findByPandaScoreId(Long pandaScoreId);
 
+    Optional<PlayerCS2Entity> findBySteamId(Long steamId);
+
     List<PlayerCS2Entity> findAllByGridIdIsNull();
 
     List<PlayerCS2Entity> findAllBySteamIdIsNotNull();
-
 }

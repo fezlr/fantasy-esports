@@ -14,6 +14,7 @@ public class TeamCS2Mapper {
     public TeamCS2Response toResponse(TeamCS2Entity entity) {
         return TeamCS2Response.builder()
                 .name(entity.getName())
+                .vrsPoints(entity.getVrsPoints())
                 .valveRank(entity.getValveRank())
                 .logoUrl(entity.getLogoUrl())
                 .players(entity.getPlayers().stream().map(playerCS2Mapper::toResponse).toList())

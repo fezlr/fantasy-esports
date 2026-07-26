@@ -9,6 +9,8 @@ import java.util.List;
 public record TeamCS2Response(
         String name,
 
+        Integer vrsPoints,
+
         Integer valveRank,
 
         String logoUrl,
