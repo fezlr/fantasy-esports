@@ -14,14 +14,14 @@ public class PandaScorePlayerCS2Mapper {
     private final TeamCS2Service teamCS2Service;
 
     public PlayerCS2Entity toEntity(PandaScorePlayerRequest dto) {
-        TeamCS2Entity team = dto.teamId() != null ? teamCS2Service.getBySourceId(dto.teamId()) : null;
+        TeamCS2Entity team = teamCS2Service.findByPandaScoreIdOrNull(dto.teamId());
 
         return PlayerCS2Entity.builder()
                 .nickname(dto.nickname())
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .team(team)
-                .pandaScoreId(dto.pandaScoreId())
+                .pandaScoreId(dto.id())
                 .lastSyncedAt(Instant.now())
                 .isActive(dto.isActive())
                 .build();

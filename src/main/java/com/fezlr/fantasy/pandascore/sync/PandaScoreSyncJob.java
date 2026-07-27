@@ -24,6 +24,7 @@ public class PandaScoreSyncJob {
     private final PlayerCS2Service playerCS2Service;
     private final PandaScorePlayerCS2Mapper pandaScorePlayerCS2Mapper;
 
+    //TODO refactor: do like in grid
     public void syncTeamsAndPlayers() {
         List<PandaScoreTeamRequest> teams = pandaScoreClient.fetchTrackedTeams();
         for (PandaScoreTeamRequest dto : teams) {

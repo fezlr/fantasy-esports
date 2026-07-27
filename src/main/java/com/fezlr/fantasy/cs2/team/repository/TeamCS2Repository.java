@@ -9,7 +9,5 @@ public interface TeamCS2Repository extends JpaRepository<TeamCS2Entity, Long> {
 
     Optional<TeamCS2Entity> findByPandaScoreId(Long pandaScoreId);
 
-    Optional<TeamCS2Entity> findByGridId(Long teamGridId);
-
     List<TeamCS2Entity> findAllByGridIdIsNull();
 }

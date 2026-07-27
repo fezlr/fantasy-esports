@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "teams_cs2_valve_history")
-public class TeamCS2ValveHistoryEntity {
+public class ValveHistoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

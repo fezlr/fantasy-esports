@@ -7,7 +7,6 @@ import com.fezlr.fantasy.grid.service.TeamGridIdResolutionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,16 +16,6 @@ public class GridSyncJob {
     private final PlayerGridIdResolutionService playerGridIdResolutionService;
     private final TeamGridIdResolutionService teamGridIdResolutionService;
     private final PlayerStatisticsAggregationService playerStatisticsAggregationService;
-
-//    @Scheduled(cron = "0 0 5 * * *")
-    public void syncTeamsAndPlayers() {
-        log.info("Starting GRID sync..");
-
-//        syncTeamSeries();
-//        calculatePlayerStatistics();
-
-        log.info("Ending GRID sync..");
-    }
 
     public void syncTeamSeries() {
         log.info("Starting syncing new series for teams");

@@ -25,3 +25,6 @@ grid:
 #  stats-url: https://api-op.grid.gg/statistics-feed/graphql
   live-url: https://api-op.grid.gg/live-data-feed/series-state/graphql
   api-key: ${GRID_API_KEY}
+  
+github:
+  valve-ranking-url: https://api.github.com/repos/ValveSoftware/counter-strike_regional_standings/contents/live

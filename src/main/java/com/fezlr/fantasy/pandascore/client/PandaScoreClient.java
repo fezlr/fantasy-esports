@@ -25,7 +25,8 @@ public class PandaScoreClient {
         log.info("idsParam: {}", idsParam);
         log.info("idsParam LENGTH: {}", idsParam.length());
 
-        return pandaScoreClientConfig.pandaScoreRestClient().get()
+        return pandaScoreClientConfig.pandaScoreRestClient()
+                .get()
                 .uri("/csgo/teams?filter[id]={idsParam}&per_page=100&token={apiKey}", idsParam, apiKey)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
