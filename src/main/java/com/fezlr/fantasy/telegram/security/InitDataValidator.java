@@ -46,6 +46,16 @@ public class InitDataValidator {
             throw new SecurityException("Missing user in initData");
         }
 
+        //check if data was sent more than 24 hours ago
+        String authDateStr = params.get("auth_date");
+        if (authDateStr != null) {
+            long authDate = Long.parseLong(authDateStr);
+            long currentTime = System.currentTimeMillis() / 1000;
+            if (currentTime - authDate > 86400) {
+                throw new SecurityException("InitData is expired");
+            }
+        }
+
         return parseUser(userJson);
     }
 

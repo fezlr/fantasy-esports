@@ -1,8 +1,8 @@
 package com.fezlr.fantasy.user.entity;
 
+import com.fezlr.fantasy.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
@@ -25,6 +25,14 @@ public class UserEntity {
     //@example
     @Column(name = "telegram_username")
     private String telegramUsername;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Builder.Default
+    @Column(name = "is_enabled")
+    private boolean isEnabled = true;
 
     //In project
     @CreationTimestamp

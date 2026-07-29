@@ -1,6 +1,8 @@
 package com.fezlr.fantasy.user.service;
 
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
+import com.fezlr.fantasy.user.enums.Role;
+import com.fezlr.fantasy.user.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 import com.fezlr.fantasy.user.entity.UserEntity;
@@ -18,9 +20,11 @@ import java.time.Instant;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserEntity getByTelegramId(Long telegramId) {
-        return userRepository.findByTelegramId(telegramId)
-                .orElseThrow(() -> new EntityNotFoundException("User is not found"));
+    @Transactional
+    public UserDetailsImpl loadUserByTelegramId(Long telegramId) {
+        UserEntity entity = userRepository.findByTelegramId(telegramId)
+                .orElseThrow(() -> new EntityNotFoundException("Telegram id is not found"));
+        return new UserDetailsImpl(entity);
     }
 
     @Transactional
@@ -35,10 +39,12 @@ public class UserService {
                 })
                 .orElseGet(() -> {
                     UserEntity userToCreate = UserEntity.builder()
-                    .telegramId(telegramUser.telegramId())
-                    .telegramUsername(telegramUser.telegramUsername())
-                    .lastActiveAt(Instant.now())
-                    .build();
+                            .telegramId(telegramUser.telegramId())
+                            .telegramUsername(telegramUser.telegramUsername())
+                            .role(Role.USER)
+                            .isEnabled(true)
+                            .lastActiveAt(Instant.now())
+                            .build();
 
                     //save and return
                     return userRepository.save(userToCreate);

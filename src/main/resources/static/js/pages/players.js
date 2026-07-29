@@ -65,7 +65,7 @@ function openTeamModal(team) {
                 <span class="player-row__fullname">${escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' '))}</span>
             </div>
             <span class="player-row__status ${p.isActive ? 'player-row__status--active' : 'player-row__status--bench'}">
-                ${p.isActive ? 'ACTIVE' : 'BENCH'}
+                ${p.isActive ? 'ACTIVE' : 'BENCHED'}
             </span>
         </div>
     `).join('');

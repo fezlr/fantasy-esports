@@ -48,7 +48,7 @@ async function loadPageHtml(pageId) {
         return pageCache[pageId];
     }
 
-    const response = await fetch(`pages/${pageId}.html`, { cache: 'reload' });
+    const response = await fetch(`/pages/${pageId}.html`, { cache: 'reload' });
     const html = await response.text();
 
     pageCache[pageId] = html;
