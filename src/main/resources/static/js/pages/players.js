@@ -104,7 +104,7 @@ function openPlayerModal(player) {
     const stats = player.playerStatistic || {};
 
     statsEl.innerHTML = `
-        <div class="stat">
+        <div class="stat stat--rating">
             <span class="stat__value">${stats.rating ?? '—'}</span>
             <span class="stat__label">Rating</span>
         </div>
