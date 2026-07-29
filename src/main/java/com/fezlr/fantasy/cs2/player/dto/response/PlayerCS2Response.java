@@ -12,6 +12,8 @@ public record PlayerCS2Response(
 
         String imageUrl,
 
+        PlayerCS2StatisticResponse playerStatistic,
+
         Long teamId,
 
         boolean isActive

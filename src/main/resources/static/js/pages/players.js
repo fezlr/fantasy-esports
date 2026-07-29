@@ -1,4 +1,5 @@
 let teamsCache = [];
+let currentTeamPlayers = [];
 
 async function loadTeams() {
     const list = document.getElementById('teams-list');
@@ -50,13 +51,14 @@ function renderTeams(teams) {
 function openTeamModal(team) {
     document.getElementById('team-modal-logo').src = team.logoUrl || placeholderImg(48);
     document.getElementById('team-modal-name').textContent = team.name;
-    document.getElementById('team-modal-rank').textContent = `HLTV #${team.valveRank ?? '—'}`;
+    document.getElementById('team-modal-rank').textContent = `VALVE #${team.valveRank ?? '—'}`;
 
     const playersEl = document.getElementById('team-modal-players');
     const players = [...(team.players || [])].sort((a, b) => Number(b.isActive) - Number(a.isActive));
+    currentTeamPlayers = players;
 
-    playersEl.innerHTML = players.map(p => `
-        <div class="player-row">
+    playersEl.innerHTML = players.map((p, index) => `
+        <div class="player-row" data-player-index="${index}">
             <img class="player-row__avatar" src="${p.imageUrl || placeholderImg(36)}" alt="">
             <div class="player-row__info">
                 <span class="player-row__nickname">${escapeHtml(p.nickname)}</span>
@@ -68,16 +70,81 @@ function openTeamModal(team) {
         </div>
     `).join('');
 
+    playersEl.querySelectorAll('.player-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const player = currentTeamPlayers[Number(row.dataset.playerIndex)];
+            openPlayerModal(player);
+        });
+    });
+
     document.getElementById('team-modal').hidden = false;
+    document.getElementById('player-modal').hidden = true;
+    lockBodyScroll();
 }
 
 function closeTeamModal() {
     document.getElementById('team-modal').hidden = true;
+    document.getElementById('player-modal').hidden = true;
+    document.body.classList.remove('modal-open');
+}
+
+function openPlayerModal(player) {
+    document.getElementById('team-modal').hidden = true;
+
+    document.getElementById('player-modal-avatar').src =
+        player.imageUrl || placeholderImg(48);
+
+    document.getElementById('player-modal-nickname').textContent =
+        player.nickname;
+
+    document.getElementById('player-modal-fullname').textContent =
+        [player.firstName, player.lastName].filter(Boolean).join(' ') || '—';
+
+    const statsEl = document.getElementById('player-modal-stats');
+    const stats = player.playerStatistic || {};
+
+    statsEl.innerHTML = `
+        <div class="stat">
+            <span class="stat__value">${stats.rating ?? '—'}</span>
+            <span class="stat__label">Rating</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value">${stats.kills ?? '—'}</span>
+            <span class="stat__label">Kills</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value">${stats.deaths ?? '—'}</span>
+            <span class="stat__label">Deaths</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value">${stats.assists ?? '—'}</span>
+            <span class="stat__label">Assists</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value">${stats.headshots ?? '—'}</span>
+            <span class="stat__label">Headshots</span>
+        </div>
+    `;
+
+    document.getElementById('player-modal').hidden = false;
+    lockBodyScroll();
+}
+
+function closePlayerModal() {
+    document.getElementById('player-modal').hidden = true;
+    document.getElementById('team-modal').hidden = false;
+    lockBodyScroll();
+}
+
+function lockBodyScroll() {
+    document.body.classList.add('modal-open');
 }
 
 function initTeamModalHandlers() {
-    document.getElementById('team-modal-backdrop').addEventListener('click', closeTeamModal);
-    document.getElementById('team-modal-close').addEventListener('click', closeTeamModal);
+    document.getElementById('team-modal-backdrop')?.addEventListener('click', closeTeamModal);
+    document.getElementById('team-modal-close')?.addEventListener('click', closeTeamModal);
+    document.getElementById('player-modal-backdrop')?.addEventListener('click', closePlayerModal);
+    document.getElementById('player-modal-close')?.addEventListener('click', closePlayerModal);
 }
 
 function placeholderImg(size) {
@@ -87,6 +154,10 @@ function placeholderImg(size) {
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
     }[c]));
 }

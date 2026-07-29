@@ -168,6 +168,12 @@
     background: var(--color-bg);
     border-radius: var(--radius-md);
     padding: 8px 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.player-row:active {
+    background: rgba(227, 166, 62, 0.08);
 }
 
 .player-row__avatar {
@@ -217,4 +223,29 @@
 .player-row__status--bench {
     color: var(--color-text-muted);
     background: rgba(139, 143, 156, 0.12);
+}
+
+/* Player modal */
+
+.player-modal__avatar {
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.player-modal__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.player-modal__stats .stat {
+    margin: 0;
+}
+
+/* Body scroll lock while any modal is open */
+
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
 }

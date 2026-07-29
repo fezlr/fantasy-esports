@@ -1,6 +1,5 @@
 package com.fezlr.fantasy.cs2.player.entity;
 
-import com.fezlr.fantasy.cs2.enums.Role;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,10 +33,6 @@ public class PlayerCS2Entity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "player_statistics")
     private PlayerCS2StatisticEntity playerStatistics;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
 
     @Column(name = "image_url")
     private String imageUrl;
