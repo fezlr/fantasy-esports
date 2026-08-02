@@ -24,12 +24,12 @@ public class TeamCS2ServiceTest {
     private TeamCS2Service teamCS2Service;
 
     @Test
-    void shouldCreateNewTeam_whenSourceIdNotFound() {
+    void shouldCreateNewTeam_whenpandaScoreIdNotFound() {
         TeamCS2Entity newTeam = TeamCS2Entity.builder()
-                .sourceId(123L)
+                .pandaScoreId(123L)
                 .name("TEAMTEST")
                 .build();
-        when(teamCS2Repository.findBySourceId(123L)).thenReturn(Optional.empty());
+        when(teamCS2Repository.findByPandaScoreId(123L)).thenReturn(Optional.empty());
         when(teamCS2Repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         TeamCS2Entity result = teamCS2Service.createOrUpdate(newTeam);
@@ -39,19 +39,19 @@ public class TeamCS2ServiceTest {
     }
 
     @Test
-    void shouldUpdateExistingTeam_whenSourceIdFound() {
+    void shouldUpdateExistingTeam_whenpandaScoreIdFound() {
         TeamCS2Entity existing = TeamCS2Entity.builder()
                 .id(1L)
-                .sourceId(123L)
+                .pandaScoreId(123L)
                 .name("Old Name")
                 .build();
 
         TeamCS2Entity updatedInfo = TeamCS2Entity.builder()
-                .sourceId(123L)
+                .pandaScoreId(123L)
                 .name("New Name")
                 .build();
 
-        when(teamCS2Repository.findBySourceId(123L)).thenReturn(Optional.of(existing));
+        when(teamCS2Repository.findByPandaScoreId(123L)).thenReturn(Optional.of(existing));
         when(teamCS2Repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         TeamCS2Entity result = teamCS2Service.createOrUpdate(updatedInfo);

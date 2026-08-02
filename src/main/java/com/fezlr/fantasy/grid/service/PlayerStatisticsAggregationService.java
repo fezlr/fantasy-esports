@@ -3,14 +3,13 @@ package com.fezlr.fantasy.grid.service;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2StatisticEntity;
 import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
+import com.fezlr.fantasy.cs2.rating.service.PlayerCS2RatingService;
 import com.fezlr.fantasy.grid.dto.stats.PlayerAggregateStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.Optional;
 public class PlayerStatisticsAggregationService {
     private static final int LOOK_BACK_DAYS = 90;
     private final PlayerCS2Service playerCS2Service;
+    private final PlayerCS2RatingService playerCS2RatingService;
     private final SeriesPlayerStatCS2Service seriesPlayerStatCS2Service;
     private final ObjectProvider<PlayerStatisticsAggregationService> selfProvider;
 
@@ -75,24 +75,10 @@ public class PlayerStatisticsAggregationService {
         statEntity.setAssists(stats.killAssistsGiven());
         statEntity.setHeadshots(stats.headshots());
         statEntity.setDeaths(stats.deaths());
-        statEntity.setRating(computeRating(stats));
+        statEntity.setRating(playerCS2RatingService.calculate(stats));
         statEntity.setLastSyncedAt(Instant.now());
 
         playerCS2Service.save(player);
         log.info("Synced new stats for playerNickname={}, playerId={}", player.getNickname(), player.getId());
-    }
-
-    //TODO: refactor
-    private BigDecimal computeRating(PlayerAggregateStats stats) {
-        int seriesCount = stats.seriesCount();
-
-        if (seriesCount == 0) {
-            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        }
-
-        double netImpact = stats.kills() - stats.deaths() + (stats.killAssistsGiven() * 0.5);
-        double swing = netImpact / seriesCount;
-
-        return BigDecimal.valueOf(swing).setScale(2, RoundingMode.HALF_UP);
     }
 }

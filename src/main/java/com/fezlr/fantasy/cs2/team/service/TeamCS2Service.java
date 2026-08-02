@@ -67,6 +67,7 @@ public class TeamCS2Service {
         return teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
     }
 
+    @Transactional
     public void updateLastSeriesSyncedAt(Long teamId, Instant timestamp) {
         TeamCS2Entity team = findById(teamId);
         team.setLastSeriesSyncedAt(timestamp);

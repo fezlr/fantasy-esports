@@ -19,6 +19,9 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(mappedBy = "userEntity", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private UserCS2Entity userCS2Entity;
+
     @Column(name = "telegram_id", nullable = false, unique = true)
     private Long telegramId;
 

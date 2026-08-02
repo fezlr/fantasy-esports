@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /*TODO: if it needs to add an web admin panel then
         (exclude = {UserDetailsServiceAutoConfiguration.class})
         should be deleted.
-        And rest assured that CustomUserDetailsService is implemented
+        And addition to that rest assured that CustomUserDetailsService is implemented
 */
 
 @EnableScheduling
