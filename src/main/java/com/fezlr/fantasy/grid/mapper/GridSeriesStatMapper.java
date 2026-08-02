@@ -1,18 +1,20 @@
 package com.fezlr.fantasy.grid.mapper;
 
+import com.fezlr.fantasy.common.validator.SteamValidator;
 import com.fezlr.fantasy.grid.dto.series.SeriesMeta;
 import com.fezlr.fantasy.grid.dto.series_state.GameStateDto;
 import com.fezlr.fantasy.grid.dto.series_state.PlayerGameStateDto;
 import com.fezlr.fantasy.grid.dto.series_state.SeriesStateDto;
 import com.fezlr.fantasy.grid.entity.SeriesPlayerStatCS2Entity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
+import java.util.*;
+
+@RequiredArgsConstructor
 @Component
 public class GridSeriesStatMapper {
+    private final SteamValidator steamValidator;
 
     public List<SeriesPlayerStatCS2Entity> toFlatEntities(Map<Long, SeriesStateDto> statesBySeriesId, Map<Long, SeriesMeta> metaBySeriesId) {
         List<SeriesPlayerStatCS2Entity> result = new ArrayList<>();
@@ -36,7 +38,9 @@ public class GridSeriesStatMapper {
                     }
 
                     for (PlayerGameStateDto player : team.players()) {
-                        result.add(toEntity(seriesId, gameNumber, meta, player));
+                        if (steamValidator.isValidSteamId(player.steamId())) {
+                            result.add(toEntity(seriesId, gameNumber, meta, player));
+                        }
                     }
                 }
             }

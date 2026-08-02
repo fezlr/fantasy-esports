@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.cs2.player.service;
 
+import com.fezlr.fantasy.common.validator.SteamValidator;
 import com.fezlr.fantasy.cs2.player.dto.response.PlayerCS2Response;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.cs2.player.mapper.PlayerCS2Mapper;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class PlayerCS2Service {
     private final PlayerCS2Repository playerCS2Repository;
     private final PlayerCS2Mapper playerCS2Mapper;
+    private final SteamValidator steamValidator;
 
     public PlayerCS2Entity findById(Long playerId) {
         return playerCS2Repository.findById(playerId).orElseThrow(() -> new EntityNotFoundException("Player is not found"));
@@ -46,7 +48,7 @@ public class PlayerCS2Service {
             entity.setGridId(gridId);
         }
 
-        if (entity.getSteamId() == null && steamId != null) {
+        if (entity.getSteamId() == null && steamId != null && steamValidator.isValidSteamId(steamId)) {
             entity.setSteamId(steamId);
         }
 
@@ -62,7 +64,6 @@ public class PlayerCS2Service {
                     existing.setFirstName(newPlayerInfoEntity.getFirstName());
                     existing.setLastName(newPlayerInfoEntity.getLastName());
                     existing.setNickname(newPlayerInfoEntity.getNickname());
-                    existing.setImageUrl(newPlayerInfoEntity.getImageUrl());
 
                     if (newPlayerInfoEntity.getTeam() != null) {
                         existing.setTeam(newPlayerInfoEntity.getTeam());

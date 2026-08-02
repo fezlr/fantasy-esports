@@ -28,8 +28,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error/", "/css/**", "/js/**", "/pages/**", "/index.html", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/**").authenticated()
+                        //TODO: delete .requestMatchers("/api/**").permitAll() until prod
+
+                                .requestMatchers("/api/**").permitAll()
+                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(telegramAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

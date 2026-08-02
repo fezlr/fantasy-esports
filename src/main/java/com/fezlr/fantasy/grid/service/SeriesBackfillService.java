@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.grid.service;
 
+import com.fezlr.fantasy.common.validator.SteamValidator;
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import com.fezlr.fantasy.cs2.team.service.TeamCS2Service;
 import com.fezlr.fantasy.grid.client.GridClient;
@@ -27,6 +28,7 @@ public class SeriesBackfillService {
     private final GridSeriesStatMapper gridSeriesStatMapper;
     private final SeriesPlayerStatCS2Service seriesPlayerStatCS2Service;
     private final TeamCS2Service teamCS2Service;
+    private final SteamValidator steamValidator;
 
     public void syncTeam(Long teamId, Instant fallbackSince) {
         TeamCS2Entity team = teamCS2Service.findById(teamId);

@@ -28,8 +28,3 @@ grid:
   
 github:
   valve-ranking-url: https://api.github.com/repos/ValveSoftware/counter-strike_regional_standings/contents/live
-
-cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-secret: ${CLOUDINARY_API_SECRET}
-  api-key: ${CLOUDINARY_API_KEY}
