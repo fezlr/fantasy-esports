@@ -24,10 +24,10 @@ public class CS2SyncJob {
         pandaScoreSyncJob.syncTeamsAndPlayers();
 
         //grid api
-        gridSyncJob.syncMissingGridIdPlayers();
-        gridSyncJob.syncMissingGridIdTeams();
-        gridSyncJob.syncTeamSeries();
-        gridSyncJob.calculatePlayerStatistics();
+//        gridSyncJob.syncMissingGridIdPlayers();
+//        gridSyncJob.syncMissingGridIdTeams();
+//        gridSyncJob.syncTeamSeries();
+//        gridSyncJob.calculatePlayerStatistics();
 
         //valve rankings
         valveSyncJob.syncTeamCS2ValveRankings();

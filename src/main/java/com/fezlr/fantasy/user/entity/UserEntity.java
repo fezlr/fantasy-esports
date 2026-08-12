@@ -4,7 +4,6 @@ import com.fezlr.fantasy.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Instant;
 
 @Getter
@@ -25,7 +24,6 @@ public class UserEntity {
     @Column(name = "telegram_id", nullable = false, unique = true)
     private Long telegramId;
 
-    //@example
     @Column(name = "telegram_username")
     private String telegramUsername;
 
@@ -37,7 +35,6 @@ public class UserEntity {
     @Column(name = "is_enabled")
     private boolean isEnabled = true;
 
-    //In project
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

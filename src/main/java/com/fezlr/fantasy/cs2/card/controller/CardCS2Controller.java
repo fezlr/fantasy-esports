@@ -29,6 +29,6 @@ public class CardCS2Controller {
         UserEntity user = userService.createOrUpdate(telegramUser);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(cardCS2Service.findAllCardsByCurrentUser(user.getTelegramId()));
+                .body(cardCS2Service.findAllCardsByTelegramId(user.getTelegramId()));
     }
 }
