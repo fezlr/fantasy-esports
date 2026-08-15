@@ -19,9 +19,11 @@ public class UserCS2Entity {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "user_id", unique = true)
-    private UserEntity userEntity;
+    private UserEntity user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "userCS2", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<PackCS2Entity> packsCS2 = new ArrayList<>();
 

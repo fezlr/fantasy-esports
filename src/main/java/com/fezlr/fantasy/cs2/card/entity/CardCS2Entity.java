@@ -2,6 +2,7 @@ package com.fezlr.fantasy.cs2.card.entity;
 
 import com.fezlr.fantasy.common.enums.Rarity;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
+import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import com.fezlr.fantasy.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,8 +21,8 @@ public class CardCS2Entity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @JoinColumn(name = "user_cs2_id")
+    private UserCS2Entity userCS2;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_cs2_id")
