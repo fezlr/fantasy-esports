@@ -7,7 +7,9 @@ async function loadTeams() {
 
     try {
         const response = await fetch('/api/v1/cs2/teams', {
-            headers: { 'X-Telegram-Init-Data': Telegram.WebApp.initData }
+            headers: {
+                'X-Telegram-Init-Data': Telegram.WebApp.initData
+            }
         });
 
         if (!response.ok) {
@@ -24,8 +26,13 @@ async function loadTeams() {
 
 function renderTeams(teams) {
     const list = document.getElementById('teams-list');
+    if (!list) return;
 
-    const sorted = [...teams].sort((a, b) => (a.valveRank ?? 999) - (b.valveRank ?? 999));
+    const sorted = [...teams].sort(
+        (a, b) => (a.valveRank ?? 999) - (b.valveRank ?? 999)
+    );
+
+    teamsCache = sorted;
 
     list.innerHTML = sorted.map((team, index) => `
         <div class="team-card" data-team-index="${index}">
@@ -38,23 +45,33 @@ function renderTeams(teams) {
         </div>
     `).join('');
 
-    teamsCache = sorted;
-
     list.querySelectorAll('.team-card').forEach(card => {
         card.addEventListener('click', () => {
             const team = teamsCache[Number(card.dataset.teamIndex)];
-            openTeamModal(team);
+
+            if (team) {
+                openTeamModal(team);
+            }
         });
     });
 }
 
 function openTeamModal(team) {
-    document.getElementById('team-modal-logo').src = team.logoUrl || placeholderImg(48);
-    document.getElementById('team-modal-name').textContent = team.name;
-    document.getElementById('team-modal-rank').textContent = `VALVE #${team.valveRank ?? '—'}`;
+    document.getElementById('team-modal-logo').src =
+        team.logoUrl || placeholderImg(48);
+
+    document.getElementById('team-modal-name').textContent =
+        team.name;
+
+    document.getElementById('team-modal-rank').textContent =
+        `VALVE #${team.valveRank ?? '—'}`;
 
     const playersEl = document.getElementById('team-modal-players');
-    const players = [...(team.players || [])].sort((a, b) => Number(b.isActive) - Number(a.isActive));
+
+    const players = [...(team.players || [])].sort(
+        (a, b) => Number(b.isActive) - Number(a.isActive)
+    );
+
     currentTeamPlayers = players;
 
     playersEl.innerHTML = players.map((p, index) => `
@@ -73,19 +90,24 @@ function openTeamModal(team) {
     playersEl.querySelectorAll('.player-row').forEach(row => {
         row.addEventListener('click', () => {
             const player = currentTeamPlayers[Number(row.dataset.playerIndex)];
-            openPlayerModal(player);
+
+            if (player) {
+                openPlayerModal(player);
+            }
         });
     });
 
     document.getElementById('team-modal').hidden = false;
     document.getElementById('player-modal').hidden = true;
+
     lockBodyScroll();
 }
 
 function closeTeamModal() {
     document.getElementById('team-modal').hidden = true;
     document.getElementById('player-modal').hidden = true;
-    document.body.classList.remove('modal-open');
+
+    unlockBodyScroll();
 }
 
 function openPlayerModal(player) {
@@ -127,24 +149,35 @@ function openPlayerModal(player) {
     `;
 
     document.getElementById('player-modal').hidden = false;
+
     lockBodyScroll();
 }
 
 function closePlayerModal() {
     document.getElementById('player-modal').hidden = true;
     document.getElementById('team-modal').hidden = false;
-    lockBodyScroll();
 }
 
 function lockBodyScroll() {
     document.body.classList.add('modal-open');
 }
 
+function unlockBodyScroll() {
+    document.body.classList.remove('modal-open');
+}
+
 function initTeamModalHandlers() {
-    document.getElementById('team-modal-backdrop')?.addEventListener('click', closeTeamModal);
-    document.getElementById('team-modal-close')?.addEventListener('click', closeTeamModal);
-    document.getElementById('player-modal-backdrop')?.addEventListener('click', closePlayerModal);
-    document.getElementById('player-modal-close')?.addEventListener('click', closePlayerModal);
+    document.getElementById('team-modal-backdrop')
+        ?.addEventListener('click', closeTeamModal);
+
+    document.getElementById('team-modal-close')
+        ?.addEventListener('click', closeTeamModal);
+
+    document.getElementById('player-modal-backdrop')
+        ?.addEventListener('click', closePlayerModal);
+
+    document.getElementById('player-modal-close')
+        ?.addEventListener('click', closePlayerModal);
 }
 
 function placeholderImg(size) {
@@ -153,6 +186,7 @@ function placeholderImg(size) {
 
 function escapeHtml(str) {
     if (!str) return '';
+
     return str.replace(/[&<>"']/g, c => ({
         '&': '&amp;',
         '<': '&lt;',

@@ -10,16 +10,68 @@
         <button class="inventory-tabs__btn inventory-tabs__btn--active" data-inventory-tab="cards">
             CARDS
         </button>
+
         <button class="inventory-tabs__btn" data-inventory-tab="packs">
             PACKS
         </button>
     </div>
 
-    <div class="inventory-section" id="inventory-cards">
-        <div class="inventory-grid" id="inventory-card-grid"></div>
+    <div id="inventory-cards" class="inventory-section">
+        <div id="inventory-card-grid" class="inventory-grid">
+            <div class="inventory-loading">Loading...</div>
+        </div>
     </div>
 
-    <div class="inventory-section" id="inventory-packs" hidden>
-        <div class="packs-grid" id="inventory-pack-grid"></div>
+    <div id="inventory-packs" class="inventory-section" hidden>
+        <div id="inventory-pack-grid" class="packs-grid"></div>
     </div>
 </section>
+
+<div class="player-card-modal" id="inventory-player-modal" hidden>
+    <div class="player-card-modal__backdrop" id="inventory-player-modal-backdrop"></div>
+
+    <div class="player-card-modal__panel">
+        <button
+                class="player-card-modal__close"
+                id="inventory-player-modal-close"
+                type="button"
+        >
+            ×
+        </button>
+
+        <div class="player-card-modal__header">
+            <img
+                    class="player-card-modal__team-logo"
+                    id="inventory-modal-team-logo"
+                    src=""
+                    alt=""
+            >
+
+            <img
+                    class="player-card-modal__avatar"
+                    id="inventory-modal-avatar"
+                    src=""
+                    alt=""
+            >
+
+            <div class="player-card-modal__info">
+                <span
+                        class="player-card-modal__nickname"
+                        id="inventory-modal-nickname"
+                ></span>
+
+                <span
+                        class="player-card-modal__team"
+                        id="inventory-modal-team"
+                ></span>
+
+                <span
+                        class="player-card-modal__rarity"
+                        id="inventory-modal-rarity"
+                ></span>
+            </div>
+        </div>
+
+        <div class="player-card-modal__stats" id="inventory-modal-stats"></div>
+    </div>
+</div>

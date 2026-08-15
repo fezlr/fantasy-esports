@@ -14,6 +14,5 @@ public record PackCS2Response(
 
         Map<Rarity, Double> rarityChances
 
-
 ) {
 }

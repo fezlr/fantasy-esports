@@ -330,8 +330,7 @@
 
 body.modal-open {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
+    scrollbar-gutter: stable;
 }
 
 @media (max-height: 600px) and (orientation: landscape) {
