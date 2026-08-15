@@ -1,5 +1,25 @@
 <section class="page" data-page="inventory">
-    <div class="stub">
-        <p class="stub__text">Здесь появится ваша коллекция карточек</p>
+    <div class="inventory-header">
+        <div>
+            <h1 class="inventory-header__title">INVENTORY</h1>
+            <span class="inventory-header__subtitle">YOUR COLLECTION</span>
+        </div>
+    </div>
+
+    <div class="inventory-tabs">
+        <button class="inventory-tabs__btn inventory-tabs__btn--active" data-inventory-tab="cards">
+            CARDS
+        </button>
+        <button class="inventory-tabs__btn" data-inventory-tab="packs">
+            PACKS
+        </button>
+    </div>
+
+    <div class="inventory-section" id="inventory-cards">
+        <div class="inventory-grid" id="inventory-card-grid"></div>
+    </div>
+
+    <div class="inventory-section" id="inventory-packs" hidden>
+        <div class="packs-grid" id="inventory-pack-grid"></div>
     </div>
 </section>

@@ -24,7 +24,9 @@ async function showPage(pageId) {
 
     currentPage = pageId;
 
-    navButtons.forEach(btn => btn.classList.remove('bottom-nav__btn--active'));
+    navButtons.forEach(btn => {
+        btn.classList.remove('bottom-nav__btn--active');
+    });
 
     document
         .querySelector(`.bottom-nav__btn[data-page="${pageId}"]`)
@@ -38,6 +40,14 @@ async function showPage(pageId) {
         loadTeams();
     }
 
+    if (pageId === 'inventory') {
+        initInventory();
+    }
+
+    if (pageId === 'shop') {
+        initShop();
+    }
+
     if (pageId === 'profile') {
         loadUser();
     }
@@ -48,7 +58,14 @@ async function loadPageHtml(pageId) {
         return pageCache[pageId];
     }
 
-    const response = await fetch(`/pages/${pageId}.html`, { cache: 'reload' });
+    const response = await fetch(`/pages/${pageId}.html`, {
+        cache: 'reload'
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to load page ${pageId}`);
+    }
+
     const html = await response.text();
 
     pageCache[pageId] = html;
@@ -59,7 +76,9 @@ async function loadPageHtml(pageId) {
 async function loadUser() {
     try {
         const response = await fetch('/api/v1/users/me', {
-            headers: { 'X-Telegram-Init-Data': Telegram.WebApp.initData }
+            headers: {
+                'X-Telegram-Init-Data': Telegram.WebApp.initData
+            }
         });
 
         if (!response.ok) {
@@ -77,6 +96,25 @@ function renderUser(user) {
     const usernameEl = document.getElementById('username');
     const telegramIdEl = document.getElementById('telegram-id');
 
-    if (usernameEl) usernameEl.textContent = user.telegramUsername ?? 'Игрок';
-    if (telegramIdEl) telegramIdEl.textContent = `ID: ${user.telegramId}`;
+    if (usernameEl) {
+        usernameEl.textContent = user.telegramUsername ?? 'Игрок';
+    }
+
+    if (telegramIdEl) {
+        telegramIdEl.textContent = `ID: ${user.telegramId}`;
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) {
+        return '';
+    }
+
+    return str.replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[c]));
 }
