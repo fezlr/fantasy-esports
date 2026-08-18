@@ -19,11 +19,19 @@ import java.util.stream.Collectors;
 
 @Component
 public class InitDataValidator {
+    @Value("${app.dev-mode:false}")
+    private boolean devMode;
+
     @Value("${telegram.bot.token}")
     private String botToken;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TelegramUserData validateAndExtractUser(String initData) {
+        if (devMode) {
+            return new TelegramUserData(1342054413L, "artemmkkkka");
+        }
+
         Map<String, String> params = parse(initData);
         String receivedHash = params.remove("hash");
         if (receivedHash == null) {

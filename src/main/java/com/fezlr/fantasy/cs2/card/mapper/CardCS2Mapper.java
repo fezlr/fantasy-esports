@@ -1,45 +1,47 @@
 package com.fezlr.fantasy.cs2.card.mapper;
 
-import com.fezlr.fantasy.cs2.card.dto.response.CardCS2Response;
-import com.fezlr.fantasy.cs2.card.dto.response.CardCS2StatisticsResponse;
-import com.fezlr.fantasy.cs2.card.dto.response.CardCS2SummaryResponse;
+import com.fezlr.fantasy.cs2.card.dto.response.InventoryCardCS2Response;
 import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
+import com.fezlr.fantasy.cs2.player.dto.response.InventoryPlayerCS2Response;
+import com.fezlr.fantasy.cs2.player.dto.response.PlayerCS2StatisticResponse;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2StatisticEntity;
+import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import org.springframework.stereotype.Component;
-import java.time.Instant;
 
 @Component
 public class CardCS2Mapper {
 
-    public CardCS2Response toResponse(CardCS2Entity entity) {
-        PlayerCS2Entity player = entity.getPlayerCS2();
-        PlayerCS2StatisticEntity statistics = player.getPlayerStatistics();
-
-        return CardCS2Response.builder()
-                .rarity(entity.getRarity())
-                .receivedAt(Instant.now())
-                .player(CardCS2SummaryResponse.builder()
-                        .nickname(player.getNickname())
-                        .firstName(player.getFirstName())
-                        .lastName(player.getLastName())
-                        .imageUrl(player.getImageUrl())
-                        .teamId(player.getTeam() != null ? player.getTeam().getId() : null)
-                        .isActive(player.isActive())
-                        .playerStatistics(statistics != null ? toStatisticsSummary(statistics) : null)
-                        .build())
+    public InventoryCardCS2Response toInventoryResponse(CardCS2Entity entity) {
+        return InventoryCardCS2Response.builder()
+                .rarity(entity.getRarity().name())
+                .player(toInventoryPlayerResponse(entity.getPlayerCS2()))
                 .build();
     }
 
-    private CardCS2StatisticsResponse toStatisticsSummary(PlayerCS2StatisticEntity statistics) {
-        return CardCS2StatisticsResponse.builder()
-                .seriesCount(statistics.getSeriesCount())
-                .kills(statistics.getKills())
-                .deaths(statistics.getDeaths())
-                .assists(statistics.getAssists())
-                .headshots(statistics.getHeadshots())
-                .rating(statistics.getRating())
-                .lastSyncedAt(Instant.now())
+    private InventoryPlayerCS2Response toInventoryPlayerResponse(PlayerCS2Entity entity) {
+        TeamCS2Entity team = entity.getTeam();
+
+        return InventoryPlayerCS2Response.builder()
+                .nickname(entity.getNickname())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .imageUrl(entity.getImageUrl())
+                .teamId(team != null ? team.getId() : null)
+                .teamName(team != null ? team.getName() : null)
+                .teamLogoUrl(team != null ? team.getLogoUrl() : null)
+                .isActive(entity.isActive())
+                .playerStatistic(entity.getPlayerStatistics() != null ? toPlayerStatisticResponse(entity.getPlayerStatistics()) : null)
+                .build();
+    }
+
+    private PlayerCS2StatisticResponse toPlayerStatisticResponse(PlayerCS2StatisticEntity entity) {
+        return PlayerCS2StatisticResponse.builder()
+                .kills(entity.getKills())
+                .deaths(entity.getDeaths())
+                .assists(entity.getAssists())
+                .headshots(entity.getHeadshots())
+                .rating(entity.getRating())
                 .build();
     }
 }

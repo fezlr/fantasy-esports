@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.user.service;
 
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
+import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import com.fezlr.fantasy.user.enums.Role;
 import com.fezlr.fantasy.user.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
 @Validated
 @RequiredArgsConstructor
@@ -38,13 +40,21 @@ public class UserService {
                     return userRepository.save(existing);
                 })
                 .orElseGet(() -> {
+                    UserCS2Entity userCS2ToCreate = UserCS2Entity.builder()
+                            .packsCS2(new ArrayList<>())
+                            .fantasyPoints(0)
+                            .build();
+
                     UserEntity userToCreate = UserEntity.builder()
                             .telegramId(telegramUser.telegramId())
                             .telegramUsername(telegramUser.telegramUsername())
                             .role(Role.USER)
+                            .userCS2Entity(userCS2ToCreate)
                             .isEnabled(true)
                             .lastActiveAt(Instant.now())
                             .build();
+
+                    userCS2ToCreate.setUser(userToCreate);
 
                     //save and return
                     return userRepository.save(userToCreate);

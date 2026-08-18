@@ -1,153 +1,6 @@
 let inventoryCards = [];
 let inventoryPacks = [];
 
-const mockInventoryCards = [
-    {
-        rarity: 'LEGENDARY',
-        player: {
-            nickname: 'donk',
-            firstName: 'Danil',
-            lastName: 'Kryshkovets',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=donk',
-            teamName: 'Spirit',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=S',
-            playerStatistic: {
-                rating: 1.24,
-                kills: 1248,
-                deaths: 1012,
-                assists: 302,
-                headshots: 641
-            }
-        }
-    },
-    {
-        rarity: 'MYTHICAL',
-        player: {
-            nickname: 'm0NESY',
-            firstName: 'Ilya',
-            lastName: 'Osipov',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=m0NESY',
-            teamName: 'G2 Esports',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=G2',
-            playerStatistic: {
-                rating: 1.21,
-                kills: 1321,
-                deaths: 1084,
-                assists: 341,
-                headshots: 702
-            }
-        }
-    },
-    {
-        rarity: 'EPIC',
-        player: {
-            nickname: 'ZywOo',
-            firstName: 'Mathieu',
-            lastName: 'Herbaut',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=ZywOo',
-            teamName: 'Vitality',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=V',
-            playerStatistic: {
-                rating: 1.18,
-                kills: 1194,
-                deaths: 1030,
-                assists: 321,
-                headshots: 598
-            }
-        }
-    },
-    {
-        rarity: 'EPIC',
-        player: {
-            nickname: 'NiKo',
-            firstName: 'Nikola',
-            lastName: 'Kovač',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=NiKo',
-            teamName: 'Falcons',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=F',
-            playerStatistic: {
-                rating: 1.16,
-                kills: 1124,
-                deaths: 1052,
-                assists: 280,
-                headshots: 672
-            }
-        }
-    },
-    {
-        rarity: 'RARE',
-        player: {
-            nickname: 'b1t',
-            firstName: 'Valeriy',
-            lastName: 'Vakhovskiy',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=b1t',
-            teamName: 'Natus Vincere',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=N',
-            playerStatistic: {
-                rating: 1.14,
-                kills: 1012,
-                deaths: 1002,
-                assists: 290,
-                headshots: 550
-            }
-        }
-    },
-    {
-        rarity: 'RARE',
-        player: {
-            nickname: 'ropz',
-            firstName: 'Robin',
-            lastName: 'Kool',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=ropz',
-            teamName: 'Vitality',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=V',
-            playerStatistic: {
-                rating: 1.12,
-                kills: 1087,
-                deaths: 1018,
-                assists: 314,
-                headshots: 603
-            }
-        }
-    },
-    {
-        rarity: 'COMMON',
-        player: {
-            nickname: 'jL',
-            firstName: 'Justinas',
-            lastName: 'Lekavicius',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=jL',
-            teamName: 'Natus Vincere',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=N',
-            playerStatistic: {
-                rating: 1.08,
-                kills: 987,
-                deaths: 1001,
-                assists: 301,
-                headshots: 517
-            }
-        }
-    },
-    {
-        rarity: 'COMMON',
-        player: {
-            nickname: 'device',
-            firstName: 'Nicolai',
-            lastName: 'Reedtz',
-            imageUrl: 'https://placehold.co/300x300/1b1d24/e3a63e?text=device',
-            teamName: 'Astralis',
-            teamLogoUrl: 'https://placehold.co/100x100/1b1d24/e3a63e?text=A',
-            playerStatistic: {
-                rating: 1.05,
-                kills: 942,
-                deaths: 931,
-                assists: 276,
-                headshots: 481
-            }
-        }
-    }
-];
-
 const mockInventoryPacks = [
     {
         id: 1,
@@ -189,12 +42,39 @@ async function initInventory() {
 }
 
 async function loadInventory() {
-    inventoryCards = mockInventoryCards;
+    await loadInventoryCards();
+    loadInventoryPacks();
+}
+
+async function loadInventoryCards() {
+    try {
+        inventoryCards = await fetchInventoryCards();
+        renderInventoryCards();
+    } catch (error) {
+        inventoryCards = [];
+        renderInventoryCardsError();
+    }
+}
+
+async function fetchInventoryCards() {
+    const response = await fetch('/api/v1/cs2/cards', {
+        headers: {
+            'X-Telegram-Init-Data': Telegram.WebApp.initData
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    return response.json();
+}
+
+function loadInventoryPacks() {
     inventoryPacks = mockInventoryPacks.filter(
         pack => Number(pack.count) > 0
     );
 
-    renderInventoryCards();
     renderInventoryPacks();
 }
 
@@ -259,9 +139,11 @@ function renderInventoryCards() {
                 </div>
 
                 <div class="inventory-card__info">
-                    <span class="inventory-card__nickname">
-                        ${escapeHtml(player.nickname)}
-                    </span>
+                    <img
+                        class="inventory-card__photo"
+                        src="${player.imageUrl || placeholderImg(60)}"
+                        alt=""
+                    >
 
                     <span class="inventory-card__team">
                         ${escapeHtml(player.teamName || 'Unknown team')}
@@ -285,6 +167,16 @@ function renderInventoryCards() {
             }
         });
     });
+}
+
+function renderInventoryCardsError() {
+    const container = document.getElementById('inventory-card-grid');
+
+    container.innerHTML = `
+        <div class="inventory-empty">
+            Failed to load your cards
+        </div>
+    `;
 }
 
 function renderInventoryPacks() {

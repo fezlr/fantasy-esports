@@ -19,7 +19,6 @@ public class UserCS2Entity {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     @JoinColumn(name = "user_id", unique = true)
     private UserEntity user;
 

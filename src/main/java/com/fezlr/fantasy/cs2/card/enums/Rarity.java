@@ -1,4 +1,4 @@
-package com.fezlr.fantasy.common.enums;
+package com.fezlr.fantasy.cs2.card.enums;
 
 import lombok.Getter;
 import java.math.BigDecimal;

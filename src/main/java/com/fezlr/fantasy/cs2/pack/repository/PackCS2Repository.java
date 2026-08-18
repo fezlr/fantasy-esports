@@ -10,7 +10,7 @@ public interface PackCS2Repository extends JpaRepository<PackCS2Entity, Long> {
 
     @Query("""
        SELECT p FROM PackCS2Entity p
-       WHERE p.userCS2.user.telegramId= :telegramId
+       WHERE p.userCS2.user.telegramId = :telegramId
     """)
     List<PackCS2Entity> findAllByUserTelegramId(@Param("telegramId") Long telegramId);
 

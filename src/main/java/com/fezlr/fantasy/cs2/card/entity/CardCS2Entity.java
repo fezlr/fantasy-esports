@@ -1,9 +1,8 @@
 package com.fezlr.fantasy.cs2.card.entity;
 
-import com.fezlr.fantasy.common.enums.Rarity;
+import com.fezlr.fantasy.cs2.card.enums.Rarity;
 import com.fezlr.fantasy.cs2.player.entity.PlayerCS2Entity;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
-import com.fezlr.fantasy.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -28,6 +27,7 @@ public class CardCS2Entity {
     @JoinColumn(name = "player_cs2_id")
     private PlayerCS2Entity playerCS2;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "rarity", nullable = false)
     private Rarity rarity;
 

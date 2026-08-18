@@ -1,6 +1,6 @@
 package com.fezlr.fantasy.cs2.pack.dto.response;
 
-import com.fezlr.fantasy.common.enums.Rarity;
+import com.fezlr.fantasy.cs2.card.enums.Rarity;
 import lombok.Builder;
 
 import java.util.Map;
