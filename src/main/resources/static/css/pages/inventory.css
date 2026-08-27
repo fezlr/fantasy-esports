@@ -146,13 +146,7 @@
     padding: 6px 1px 1px;
 }
 
-.inventory-card__photo {
-    width: 26px;
-    height: 26px;
-    border-radius: var(--radius-full);
-    object-fit: cover;
-    border: 1px solid var(--color-panel-border);
-}
+
 
 .inventory-card__team {
     display: block;
@@ -162,6 +156,15 @@
     max-width: 100%;
     color: var(--color-text-muted);
     font-size: 8px;
+}
+
+.inventory-card__nickname {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .inventory-card__points {

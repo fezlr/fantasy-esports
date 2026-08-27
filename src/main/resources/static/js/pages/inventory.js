@@ -145,11 +145,9 @@ function renderInventoryCards() {
                 </div>
 
                 <div class="inventory-card__info">
-                    <img
-                        class="inventory-card__photo"
-                        src="${player.imageUrl || placeholderImg(60)}"
-                        alt=""
-                    >
+                    <span class="inventory-card__nickname">
+                        ${escapeHtml(player.nickname)}
+                    </span>
 
                     <span class="inventory-card__team">
                         ${escapeHtml(player.teamName || 'Unknown team')}
