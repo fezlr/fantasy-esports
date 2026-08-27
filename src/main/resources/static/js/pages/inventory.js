@@ -3,6 +3,12 @@ let inventoryPacks = [];
 
 const mockInventoryPacks = [
     {
+        id: 6,
+        name: 'COMMON PACK',
+        count: 0,
+        icon: 'C'
+    },
+    {
         id: 1,
         name: 'COMMON PACK',
         count: 1,
@@ -206,8 +212,8 @@ function renderInventoryPacks() {
                     ${escapeHtml(pack.name)}
                 </span>
 
-                <span class="inventory-pack__count ${count > 1 ? 'inventory-pack__count--multiple' : ''}">
-                    ${count > 1 ? `×${count}` : 'AVAILABLE'}
+                <span class="inventory-pack__count ${count >= 1 ? 'inventory-pack__count--multiple' : ''}">
+                    ${`×${count}`}
                 </span>
 
                 <button
