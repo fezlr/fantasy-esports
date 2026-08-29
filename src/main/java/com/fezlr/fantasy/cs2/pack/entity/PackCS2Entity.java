@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.cs2.pack.entity;
 
 import com.fezlr.fantasy.cs2.pack.enums.PackType;
+import com.fezlr.fantasy.cs2.packshop.entity.PackShopCS2Entity;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,10 +23,17 @@ public class PackCS2Entity {
     @JoinColumn(name = "user_cs2_id", nullable = false)
     private UserCS2Entity userCS2;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pack_shop_cs2_id")
+    private PackShopCS2Entity packShopCS2;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "pack_type", nullable = false)
     private PackType packType;
 
     @Column(name = "received_at", nullable = false)
     private Instant receivedAt;
+
+    @Column(name = "opened_at")
+    private Instant openedAt;
 }
