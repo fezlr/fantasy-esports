@@ -1,10 +1,17 @@
 Telegram.WebApp.ready();
 Telegram.WebApp.expand();
 
+let currentPage = null;
 const pageContent = document.getElementById('page-content');
 const navButtons = document.querySelectorAll('.bottom-nav__btn');
 const pageCache = {};
-let currentPage = null;
+const RARITY_ORDER = ['COMMON', 'RARE', 'EPIC', 'MYTHICAL', 'LEGENDARY'];
+
+function sortRarityChances(rarityChances) {
+    return Object.entries(rarityChances).sort(
+        ([a], [b]) => RARITY_ORDER.indexOf(a) - RARITY_ORDER.indexOf(b)
+    );
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
@@ -103,4 +110,22 @@ function renderUser(user) {
     if (telegramIdEl) {
         telegramIdEl.textContent = `ID: ${user.telegramId}`;
     }
+}
+
+function placeholderImg(size) {
+    return `https://placehold.co/${size}x${size}/1b1d24/8b8f9c?text=%20`;
+}
+
+function escapeHtml(str) {
+    if (!str) {
+        return '';
+    }
+
+    return String(str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[c]));
 }

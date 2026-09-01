@@ -1,55 +1,20 @@
 let inventoryCards = [];
 let inventoryPacks = [];
-
-const mockInventoryPacks = [
-    {
-        id: 6,
-        name: 'COMMON PACK',
-        count: 0,
-        icon: 'C'
-    },
-    {
-        id: 1,
-        name: 'COMMON PACK',
-        count: 1,
-        icon: 'C'
-    },
-    {
-        id: 2,
-        name: 'RARE PACK',
-        count: 2,
-        icon: 'R'
-    },
-    {
-        id: 3,
-        name: 'EPIC PACK',
-        count: 5,
-        icon: 'E'
-    },
-    {
-        id: 4,
-        name: 'MYTHICAL PACK',
-        count: 0,
-        icon: 'M'
-    },
-    {
-        id: 5,
-        name: 'LEGENDARY PACK',
-        count: 3,
-        icon: 'L'
-    }
-];
+let inventoryPackGroups = [];
+let pendingOpenPackId = null;
 
 async function initInventory() {
     initInventoryTabs();
     initInventoryModalHandlers();
+    initInventoryPackModalHandlers();
+    initConfirmModalHandlers();
 
     await loadInventory();
 }
 
 async function loadInventory() {
     await loadInventoryCards();
-    loadInventoryPacks();
+    await loadInventoryPacks();
 }
 
 async function loadInventoryCards() {
@@ -76,12 +41,29 @@ async function fetchInventoryCards() {
     return response.json();
 }
 
-function loadInventoryPacks() {
-    inventoryPacks = mockInventoryPacks.filter(
-        pack => Number(pack.count) > 0
-    );
+async function loadInventoryPacks() {
+    try {
+        inventoryPacks = await fetchInventoryPacks();
+        renderInventoryPacks();
+    } catch (error) {
+        console.error('Failed to load inventory packs:', error);
+        inventoryPacks = [];
+        renderInventoryPacksError();
+    }
+}
 
-    renderInventoryPacks();
+async function fetchInventoryPacks() {
+    const response = await fetch('/api/v1/cs2/packs', {
+        headers: {
+            'X-Telegram-Init-Data': Telegram.WebApp.initData
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    return response.json();
 }
 
 function initInventoryTabs() {
@@ -183,6 +165,27 @@ function renderInventoryCardsError() {
     `;
 }
 
+function groupInventoryPacksByType(packs) {
+    const groups = new Map();
+
+    packs.forEach(pack => {
+        const key = pack.packType;
+
+        if (!groups.has(key)) {
+            groups.set(key, {
+                packType: pack.packType,
+                name: pack.name,
+                rarityChances: pack.rarityChances,
+                items: []
+            });
+        }
+
+        groups.get(key).items.push(pack);
+    });
+
+    return Array.from(groups.values());
+}
+
 function renderInventoryPacks() {
     const container = document.getElementById('inventory-pack-grid');
 
@@ -195,35 +198,75 @@ function renderInventoryPacks() {
         return;
     }
 
-    container.innerHTML = inventoryPacks.map(pack => {
-        const count = Number(pack.count);
+    inventoryPackGroups = groupInventoryPacksByType(inventoryPacks);
+
+    container.innerHTML = inventoryPackGroups.map((group, index) => {
+        const packType = group.packType.toLowerCase();
+        const count = group.items.length;
 
         return `
-            <article class="inventory-pack">
+            <article
+                class="inventory-pack inventory-pack--${packType}"
+                data-pack-group-index="${index}"
+            >
+                <span class="inventory-pack__count">×${count}</span>
+
                 <div class="inventory-pack__visual">
                     <div class="inventory-pack__icon">
-                        ${escapeHtml(pack.icon || '?')}
+                        ${group.packType.charAt(0)}
                     </div>
                 </div>
 
                 <span class="inventory-pack__name">
-                    ${escapeHtml(pack.name)}
-                </span>
-
-                <span class="inventory-pack__count ${count >= 1 ? 'inventory-pack__count--multiple' : ''}">
-                    ${`×${count}`}
+                    ${escapeHtml(group.name)}
                 </span>
 
                 <button
                     class="inventory-pack__open"
                     type="button"
-                    data-pack-id="${pack.id}"
+                    data-pack-group-index="${index}"
                 >
                     OPEN
                 </button>
             </article>
         `;
     }).join('');
+
+    container.querySelectorAll('.inventory-pack').forEach(card => {
+        card.addEventListener('click', event => {
+            if (event.target.closest('.inventory-pack__open')) {
+                return;
+            }
+
+            const index = Number(card.dataset.packGroupIndex);
+            const group = inventoryPackGroups[index];
+
+            if (group) {
+                openInventoryPackModal(group);
+            }
+        });
+    });
+
+    container.querySelectorAll('.inventory-pack__open').forEach(button => {
+        button.addEventListener('click', () => {
+            const index = Number(button.dataset.packGroupIndex);
+            const group = inventoryPackGroups[index];
+
+            if (group) {
+                openConfirmModal(group.items[0].id, group.name);
+            }
+        });
+    });
+}
+
+function renderInventoryPacksError() {
+    const container = document.getElementById('inventory-pack-grid');
+
+    container.innerHTML = `
+        <div class="inventory-empty">
+            Failed to load your packs
+        </div>
+    `;
 }
 
 function openPlayerCardModal(card) {
@@ -296,6 +339,105 @@ function closePlayerCardModal() {
     document.body.classList.remove('modal-open');
 }
 
+function openInventoryPackModal(group) {
+    document.getElementById('inventory-pack-chances-modal-name').textContent = group.name;
+
+    const openButton = document.getElementById('inventory-pack-chances-modal-open');
+    openButton.dataset.packId = group.items[0].id;
+    openButton.dataset.packName = group.name;
+
+    const barsContainer = document.getElementById('inventory-pack-chances-modal-bars');
+    const rarities = sortRarityChances(group.rarityChances);
+
+    barsContainer.innerHTML = rarities.map(([rarity, chance]) => `
+        <div class="pack-chance-bar pack-chance-bar--${rarity.toLowerCase()}">
+            <div class="pack-chance-bar__top">
+                <span>${rarity}</span>
+                <span class="pack-chance-bar__percent">${chance}%</span>
+            </div>
+            <div class="pack-chance-bar__track">
+                <div class="pack-chance-bar__fill" data-target-width="${chance}"></div>
+            </div>
+        </div>
+    `).join('');
+
+    const modal = document.getElementById('inventory-pack-chances-modal');
+
+    modal.hidden = false;
+
+    requestAnimationFrame(() => {
+        modal.classList.add('pack-chances-modal--open');
+
+        requestAnimationFrame(() => {
+            barsContainer.querySelectorAll('.pack-chance-bar__fill').forEach(fill => {
+                fill.style.width = `${fill.dataset.targetWidth}%`;
+            });
+        });
+    });
+
+    document.body.classList.add('modal-open');
+}
+
+function closeInventoryPackModal() {
+    const modal = document.getElementById('inventory-pack-chances-modal');
+
+    modal.classList.remove('pack-chances-modal--open');
+
+    document.querySelectorAll('#inventory-pack-chances-modal .pack-chance-bar__fill').forEach(fill => {
+        fill.style.width = '0';
+    });
+
+    setTimeout(() => {
+        modal.hidden = true;
+    }, 180);
+
+    document.body.classList.remove('modal-open');
+}
+
+function openConfirmModal(packId, packName) {
+    pendingOpenPackId = packId;
+
+    document.getElementById('pack-open-confirm-text').textContent =
+        `Are you sure you want to open ${packName}?`;
+
+    const modal = document.getElementById('pack-open-confirm-modal');
+
+    modal.hidden = false;
+
+    requestAnimationFrame(() => {
+        modal.classList.add('confirm-modal--open');
+    });
+
+    document.body.classList.add('modal-open');
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('pack-open-confirm-modal');
+
+    modal.classList.remove('confirm-modal--open');
+
+    setTimeout(() => {
+        modal.hidden = true;
+    }, 180);
+
+    document.body.classList.remove('modal-open');
+
+    pendingOpenPackId = null;
+}
+
+function confirmOpenPack() {
+    if (pendingOpenPackId === null) {
+        return;
+    }
+
+    openPack(pendingOpenPackId);
+    closeConfirmModal();
+}
+
+function openPack(packId) {
+    console.log('TODO: request to open pack', packId);
+}
+
 function initInventoryModalHandlers() {
     document
         .getElementById('inventory-player-modal-backdrop')
@@ -306,24 +448,41 @@ function initInventoryModalHandlers() {
         ?.addEventListener('click', closePlayerCardModal);
 }
 
+function initInventoryPackModalHandlers() {
+    document
+        .getElementById('inventory-pack-chances-modal-backdrop')
+        ?.addEventListener('click', closeInventoryPackModal);
+
+    document
+        .getElementById('inventory-pack-chances-modal-close')
+        ?.addEventListener('click', closeInventoryPackModal);
+
+    document
+        .getElementById('inventory-pack-chances-modal-open')
+        ?.addEventListener('click', () => {
+            const button = document.getElementById('inventory-pack-chances-modal-open');
+            const packId = Number(button.dataset.packId);
+            const packName = button.dataset.packName;
+
+            closeInventoryPackModal();
+            openConfirmModal(packId, packName);
+        });
+}
+
+function initConfirmModalHandlers() {
+    document
+        .getElementById('pack-open-confirm-backdrop')
+        ?.addEventListener('click', closeConfirmModal);
+
+    document
+        .getElementById('pack-open-confirm-close')
+        ?.addEventListener('click', closeConfirmModal);
+
+    document
+        .getElementById('pack-open-confirm-yes')
+        ?.addEventListener('click', confirmOpenPack);
+}
+
 function normalizeRarity(rarity) {
     return String(rarity || 'COMMON').toLowerCase();
-}
-
-function placeholderImg(size) {
-    return `https://placehold.co/${size}x${size}/1b1d24/8b8f9c?text=%20`;
-}
-
-function escapeHtml(str) {
-    if (!str) {
-        return '';
-    }
-
-    return String(str).replace(/[&<>"']/g, c => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }[c]));
 }

@@ -179,19 +179,3 @@ function initTeamModalHandlers() {
     document.getElementById('player-modal-close')
         ?.addEventListener('click', closePlayerModal);
 }
-
-function placeholderImg(size) {
-    return `https://placehold.co/${size}x${size}/1b1d24/8b8f9c?text=%20`;
-}
-
-function escapeHtml(str) {
-    if (!str) return '';
-
-    return str.replace(/[&<>"']/g, c => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }[c]));
-}

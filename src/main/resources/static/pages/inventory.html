@@ -23,7 +23,9 @@
     </div>
 
     <div id="inventory-packs" class="inventory-section" hidden>
-        <div id="inventory-pack-grid" class="packs-grid"></div>
+        <div id="inventory-pack-grid" class="packs-grid">
+            <div class="inventory-loading">Loading...</div>
+        </div>
     </div>
 </section>
 
@@ -38,14 +40,14 @@
 
         <div class="player-card-modal__header">
             <img class="player-card-modal__team-logo"
-                    id="inventory-modal-team-logo"
-                    src=""
-                    alt="">
+                 id="inventory-modal-team-logo"
+                 src=""
+                 alt="">
 
             <img class="player-card-modal__avatar"
-                    id="inventory-modal-avatar"
-                    src=""
-                    alt="">
+                 id="inventory-modal-avatar"
+                 src=""
+                 alt="">
 
             <div class="player-card-modal__info">
 
@@ -64,5 +66,55 @@
         </div>
 
         <div class="player-card-modal__stats" id="inventory-modal-stats"></div>
+    </div>
+</div>
+
+<div class="pack-chances-modal" id="inventory-pack-chances-modal" hidden>
+    <div class="pack-chances-modal__backdrop" id="inventory-pack-chances-modal-backdrop"></div>
+
+    <div class="pack-chances-modal__panel">
+        <button
+                class="pack-chances-modal__close"
+                id="inventory-pack-chances-modal-close"
+                type="button">×</button>
+
+        <div class="pack-chances-modal__header">
+            <span class="pack-chances-modal__name" id="inventory-pack-chances-modal-name"></span>
+        </div>
+
+        <div class="pack-chances-modal__bars" id="inventory-pack-chances-modal-bars"></div>
+
+        <button
+                class="pack-chances-modal__buy"
+                id="inventory-pack-chances-modal-open"
+                type="button">OPEN</button>
+    </div>
+</div>
+
+<div class="confirm-modal" id="pack-open-confirm-modal" hidden>
+    <div class="confirm-modal__backdrop" id="pack-open-confirm-backdrop"></div>
+
+    <div class="confirm-modal__panel">
+        <div class="confirm-modal__text-box">
+            <span class="confirm-modal__text" id="pack-open-confirm-text"></span>
+        </div>
+
+        <div class="confirm-modal__actions">
+            <button
+                    class="confirm-modal__button confirm-modal__button--confirm"
+                    id="pack-open-confirm-yes"
+                    type="button"
+            >
+                YES
+            </button>
+
+            <button
+                    class="confirm-modal__button confirm-modal__button--cancel"
+                    id="pack-open-confirm-close"
+                    type="button"
+            >
+                CLOSE
+            </button>
+        </div>
     </div>
 </div>

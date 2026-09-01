@@ -27,10 +27,6 @@ public class PackCS2Entity {
     @JoinColumn(name = "pack_shop_cs2_id")
     private PackShopCS2Entity packShopCS2;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pack_type", nullable = false)
-    private PackType packType;
-
     @Column(name = "received_at", nullable = false)
     private Instant receivedAt;
 

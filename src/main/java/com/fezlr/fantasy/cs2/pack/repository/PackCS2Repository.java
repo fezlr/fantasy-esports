@@ -9,9 +9,11 @@ import java.util.List;
 public interface PackCS2Repository extends JpaRepository<PackCS2Entity, Long> {
 
     @Query("""
-       SELECT p FROM PackCS2Entity p
-       WHERE p.userCS2.user.telegramId = :telegramId
-    """)
+            SELECT p FROM PackCS2Entity p
+            JOIN FETCH p.packShopCS2 ps
+            JOIN FETCH ps.dropChances
+            WHERE p.userCS2.user.telegramId = :telegramId
+            """)
     List<PackCS2Entity> findAllByUserTelegramId(@Param("telegramId") Long telegramId);
 
 }

@@ -13,8 +13,10 @@ public class PackCS2Mapper {
         List<PackDropCS2ChanceEntity> packDrop = entity.getPackShopCS2().getDropChances();
 
         return PackCS2Response.builder()
-                .name(entity.getPackType().name())
-                .price(entity.getPackShopCS2().getCost())
+                .id(entity.getId())
+                .name(entity.getPackShopCS2().getPackType().name())
+                .packType(entity.getPackShopCS2().getPackType())
+                .cost(entity.getPackShopCS2().getCost())
                 .rarityChances(packDrop.stream().collect(Collectors.toMap(
                                 PackDropCS2ChanceEntity::getRarity,
                                 PackDropCS2ChanceEntity::getChance)))

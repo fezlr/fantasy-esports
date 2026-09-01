@@ -1,4 +1,3 @@
-const RARITY_ORDER = ['COMMON', 'RARE', 'EPIC', 'MYTHICAL', 'LEGENDARY'];
 let shopPacksCache = [];
 
 async function initShop() {
@@ -165,16 +164,4 @@ function sortRarityChances(rarityChances) {
     return Object.entries(rarityChances).sort(
         ([a], [b]) => RARITY_ORDER.indexOf(a) - RARITY_ORDER.indexOf(b)
     );
-}
-
-function escapeHtml(str) {
-    if (!str) return '';
-
-    return str.replace(/[&<>"']/g, c => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }[c]));
 }

@@ -22,7 +22,7 @@
 .shop-balance {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     padding: 7px 10px;
     border: 1px solid var(--color-panel-border);
     border-radius: var(--radius-md);
@@ -71,6 +71,7 @@
     min-height: 150px;
     border-radius: var(--radius-md);
     background: var(--color-bg);
+    border: 2px solid var(--color-panel-border);
     margin-bottom: 12px;
 }
 
@@ -78,12 +79,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 92px;
-    height: 112px;
+    width: clamp(72px, 24vw, 92px);
+    height: clamp(88px, 30vw, 112px);
     border-radius: 10px;
-    border: 1px solid var(--color-panel-border);
+    border: 1px solid #555b68;
     background: linear-gradient(145deg, #252832, #15171d);
-    font-size: 32px;
+    font-size: clamp(24px, 8vw, 32px);
     font-weight: 700;
 }
 
@@ -166,20 +167,28 @@
     transform: scale(0.98);
 }
 
-.shop-pack--epic .shop-pack__icon {
-    border-color: var(--color-epic);
-}
-
-.shop-pack--legendary .shop-pack__icon {
-    border-color: var(--color-legendary);
-}
-
-.shop-pack--common .shop-pack__icon {
+.shop-pack--common .shop-pack__visual {
     border-color: var(--color-common);
 }
 
-.shop-pack--mythical .shop-pack__icon {
+.shop-pack--rare .shop-pack__visual {
+    border-color: var(--color-rare);
+    box-shadow: 0 0 6px rgba(75, 142, 216, 0.18);
+}
+
+.shop-pack--epic .shop-pack__visual {
+    border-color: var(--color-epic);
+    box-shadow: 0 0 7px rgba(139, 92, 246, 0.22);
+}
+
+.shop-pack--mythical .shop-pack__visual {
     border-color: var(--color-mythical);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.24);
+}
+
+.shop-pack--legendary .shop-pack__visual {
+    border-color: var(--color-legendary);
+    box-shadow: 0 0 9px rgba(227, 166, 62, 0.3);
 }
 
 .pack-chances-modal {

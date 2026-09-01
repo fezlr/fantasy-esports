@@ -115,25 +115,25 @@
 
 .inventory-card__team-logo {
     position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 30px;
-    height: 30px;
-    padding: 4px;
+    top: 4px;
+    left: 4px;
+    width: clamp(16px, 6vw, 22px);
+    height: clamp(16px, 6vw, 22px);
+    padding: clamp(2px, 1vw, 4px);
     object-fit: contain;
-    border-radius: 7px;
-    background: rgba(18, 19, 23, 0.82);
+    border-radius: 6px;
+    background: rgba(18, 19, 23, 0.72);
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .inventory-card__rarity {
     position: absolute;
-    right: 5px;
-    top: 5px;
-    padding: 3px 5px;
+    right: 4px;
+    top: 4px;
+    padding: clamp(1px, 0.6vw, 2px) clamp(3px, 1.2vw, 4px);
     border-radius: var(--radius-full);
-    background: rgba(18, 19, 23, 0.88);
-    font-size: 6px;
+    background: rgba(18, 19, 23, 0.78);
+    font-size: clamp(4px, 1.2vw, 5px);
     font-weight: 700;
     letter-spacing: 0.04em;
 }
@@ -145,8 +145,6 @@
     gap: 3px;
     padding: 6px 1px 1px;
 }
-
-
 
 .inventory-card__team {
     display: block;
@@ -213,11 +211,30 @@
 }
 
 .inventory-pack {
+    position: relative;
     min-width: 0;
     background: var(--color-panel);
     border: 1px solid var(--color-panel-border);
     border-radius: var(--radius-lg);
     padding: 7px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.inventory-pack:active {
+    transform: scale(0.96);
+}
+
+.inventory-pack__count {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    padding: 3px 7px;
+    border-radius: var(--radius-full);
+    background: rgba(18, 19, 23, 0.88);
+    color: var(--color-text);
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .inventory-pack__visual {
@@ -227,19 +244,43 @@
     aspect-ratio: 0.72;
     border-radius: 9px;
     background: var(--color-bg);
-    border: 1px solid var(--color-panel-border);
+    border: 2px solid var(--color-panel-border);
+}
+
+.inventory-pack--common .inventory-pack__visual {
+    border-color: var(--color-common);
+}
+
+.inventory-pack--rare .inventory-pack__visual {
+    border-color: var(--color-rare);
+    box-shadow: 0 0 6px rgba(75, 142, 216, 0.18);
+}
+
+.inventory-pack--epic .inventory-pack__visual {
+    border-color: var(--color-epic);
+    box-shadow: 0 0 7px rgba(139, 92, 246, 0.22);
+}
+
+.inventory-pack--mythical .inventory-pack__visual {
+    border-color: var(--color-mythical);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.24);
+}
+
+.inventory-pack--legendary .inventory-pack__visual {
+    border-color: var(--color-legendary);
+    box-shadow: 0 0 9px rgba(227, 166, 62, 0.3);
 }
 
 .inventory-pack__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 52px;
-    height: 68px;
+    width: clamp(40px, 14vw, 52px);
+    height: clamp(52px, 18vw, 68px);
     border-radius: 7px;
     background: linear-gradient(145deg, #252832, #15171d);
     border: 1px solid #555b68;
-    font-size: 20px;
+    font-size: clamp(15px, 5vw, 20px);
     font-weight: 700;
 }
 
@@ -249,20 +290,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: center;
     font-size: 9px;
     font-weight: 700;
-}
-
-.inventory-pack__count {
-    display: block;
-    margin-top: 3px;
-    color: var(--color-text-muted);
-    font-size: 8px;
-}
-
-.inventory-pack__count--multiple {
-    color: var(--color-text-muted);
-    font-size: 8px;
 }
 
 .inventory-pack__open {
@@ -426,4 +456,102 @@
     .inventory-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+}
+
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.confirm-modal--open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-modal[hidden] {
+    display: none;
+}
+
+.confirm-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.confirm-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(320px, 100%);
+    padding: 20px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    text-align: center;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.confirm-modal--open .confirm-modal__panel {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.confirm-modal__text-box {
+    padding: 14px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-md);
+}
+
+.confirm-modal__text {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text);
+}
+
+.confirm-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.confirm-modal__button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-modal__button--cancel {
+    order: 2;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-panel-border);
+}
+
+.confirm-modal__button--confirm {
+    order: 1;
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.confirm-modal__button:active {
+    transform: scale(0.98);
 }

@@ -1,13 +1,6 @@
 app:
   dev-mode: true
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
-
-
-
 spring:
   config:
     import: optional:file:.env[.properties]
