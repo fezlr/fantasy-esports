@@ -14,7 +14,7 @@ public record PackShopCS2Response(
 
         String name,
 
-        Integer cost,
+        long cost,
 
         Map<Rarity, BigDecimal> rarityChances
 ) {

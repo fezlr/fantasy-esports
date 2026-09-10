@@ -1,6 +1,5 @@
 package com.fezlr.fantasy.cs2.pack.entity;
 
-import com.fezlr.fantasy.cs2.pack.enums.PackType;
 import com.fezlr.fantasy.cs2.packshop.entity.PackShopCS2Entity;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import jakarta.persistence.*;

@@ -60,4 +60,14 @@ public class UserService {
                     return userRepository.save(userToCreate);
                 });
     }
+
+    public UserEntity findByTelegramId(Long telegramId) {
+        return userRepository.findByTelegramId(telegramId).orElseThrow(() -> new EntityNotFoundException("User is not found"));
+
+    }
+
+    @Transactional
+    public UserEntity save(UserEntity entity) {
+        return userRepository.save(entity);
+    }
 }

@@ -1,6 +1,9 @@
 package com.fezlr.fantasy.common.exception.handler;
 
-import com.fezlr.fantasy.common.exception.SourceIdNotFound;
+import com.fezlr.fantasy.common.exception.AccessDeniedException;
+import com.fezlr.fantasy.common.exception.NotEnoughFantasyPointsException;
+import com.fezlr.fantasy.common.exception.PackShopIsNotAvailableException;
+import com.fezlr.fantasy.common.exception.SourceIdNotFoundException;
 import com.fezlr.fantasy.common.exception.dto.ErrorResponseDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -113,8 +116,8 @@ public class GlobalExceptionHandler {
                 .body(message);
     }
 
-    @ExceptionHandler(SourceIdNotFound.class)
-    public ResponseEntity<ErrorResponseDto> handleSourceIdNotFoundException(SourceIdNotFound e) {
+    @ExceptionHandler(SourceIdNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleSourceIdNotFoundException(SourceIdNotFoundException e) {
         var message = ErrorResponseDto.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
@@ -126,6 +129,54 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+
+    @ExceptionHandler(NotEnoughFantasyPointsException.class)
+    public ResponseEntity<ErrorResponseDto> handleNotEnoughFantasyPointsException(NotEnoughFantasyPointsException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Insufficient funds")
+                .message("Not enough currency")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .message("Insufficient permissions")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(message);
+    }
+
+    @ExceptionHandler(PackShopIsNotAvailableException.class)
+    public ResponseEntity<ErrorResponseDto> handlePackShopIsNotAvailableException(PackShopIsNotAvailableException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .error("Unavailable")
+                .message("Service unavailable")
+                .timestamp(Instant.now().toString())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(message);
     }
 }

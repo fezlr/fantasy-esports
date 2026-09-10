@@ -2,6 +2,7 @@ package com.fezlr.fantasy.user.entity;
 
 import com.fezlr.fantasy.cs2.pack.entity.PackCS2Entity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class UserCS2Entity {
     private List<PackCS2Entity> packsCS2 = new ArrayList<>();
 
     @Builder.Default
+    @Min(value = 0)
     @Column(name = "fantasy_points", nullable = false)
-    private Integer fantasyPoints = 0;
+    private long fantasyPoints = 0;
 }

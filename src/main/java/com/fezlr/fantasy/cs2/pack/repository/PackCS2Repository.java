@@ -15,5 +15,4 @@ public interface PackCS2Repository extends JpaRepository<PackCS2Entity, Long> {
             WHERE p.userCS2.user.telegramId = :telegramId
             """)
     List<PackCS2Entity> findAllByUserTelegramId(@Param("telegramId") Long telegramId);
-
 }

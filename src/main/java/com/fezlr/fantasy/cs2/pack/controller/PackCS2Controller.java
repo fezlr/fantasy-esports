@@ -1,6 +1,8 @@
 package com.fezlr.fantasy.cs2.pack.controller;
 
 import com.fezlr.fantasy.cs2.pack.dto.response.PackCS2Response;
+import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseCS2Response;
+import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseShopCS2Response;
 import com.fezlr.fantasy.cs2.pack.service.PackCS2Service;
 import com.fezlr.fantasy.telegram.security.InitDataValidator;
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
@@ -10,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,10 +25,22 @@ public class PackCS2Controller {
 
     @GetMapping
     public ResponseEntity<List<PackCS2Response>> getAllPacksByCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
-        TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
-        UserEntity user = userService.createOrUpdate(telegramUser);
+        TelegramUserData telegramUserData = initDataValidator.validateAndExtractUser(initData);
+        UserEntity currentUser = userService.findByTelegramId(telegramUserData.telegramId());
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(packCS2Service.findAllPacksByTelegramId(user.getTelegramId()));
+                .body(packCS2Service.findAllPacksByTelegramId(currentUser.getTelegramId()));
+    }
+
+
+    @PostMapping("/purchase/{shopPackId}")
+    public ResponseEntity<PackPurchaseCS2Response> purchasePackByCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData, @PathVariable("shopPackId") Long shopPackId) {
+        TelegramUserData telegramUserData = initDataValidator.validateAndExtractUser(initData);
+        UserEntity currentUser = userService.findByTelegramId(telegramUserData.telegramId());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(packCS2Service.purchasePackByUser(currentUser, shopPackId));
     }
 }
