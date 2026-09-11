@@ -36,7 +36,6 @@ public class UserService {
                     existing.setTelegramUsername(telegramUser.telegramUsername());
                     existing.setLastActiveAt(Instant.now());
 
-                    //save and return
                     return userRepository.save(existing);
                 })
                 .orElseGet(() -> {
@@ -56,18 +55,12 @@ public class UserService {
 
                     userCS2ToCreate.setUser(userToCreate);
 
-                    //save and return
                     return userRepository.save(userToCreate);
                 });
     }
 
     public UserEntity findByTelegramId(Long telegramId) {
         return userRepository.findByTelegramId(telegramId).orElseThrow(() -> new EntityNotFoundException("User is not found"));
-
     }
 
-    @Transactional
-    public UserEntity save(UserEntity entity) {
-        return userRepository.save(entity);
-    }
 }

@@ -2,6 +2,7 @@ Telegram.WebApp.ready();
 Telegram.WebApp.expand();
 
 let currentPage = null;
+let userFantasyPoints = 0;
 const pageContent = document.getElementById('page-content');
 const navButtons = document.querySelectorAll('.bottom-nav__btn');
 const pageCache = {};
@@ -57,6 +58,7 @@ async function showPage(pageId) {
 
     if (pageId === 'profile') {
         loadUser();
+        loadUserFantasyPoints();
     }
 }
 
@@ -109,6 +111,52 @@ function renderUser(user) {
 
     if (telegramIdEl) {
         telegramIdEl.textContent = `ID: ${user.telegramId}`;
+    }
+}
+
+async function loadUserFantasyPoints() {
+    try {
+        const response = await fetch('/api/v1/cs2/users/me/points', {
+            headers: {
+                'X-Telegram-Init-Data': Telegram.WebApp.initData
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        userFantasyPoints = data.fantasyPoints ?? 0;
+    } catch (err) {
+        console.error('Failed to load fantasy points:', err);
+    }
+
+    renderUserFantasyPoints();
+}
+
+function setUserFantasyPoints(points) {
+    userFantasyPoints = points;
+    renderUserFantasyPoints();
+}
+
+function renderUserFantasyPoints() {
+    const shopBalanceEl = document.querySelector('.shop-balance__value');
+
+    if (shopBalanceEl) {
+        shopBalanceEl.textContent = userFantasyPoints;
+    }
+
+    const inventoryBalanceEl = document.getElementById('inventory-balance-value');
+
+    if (inventoryBalanceEl) {
+        inventoryBalanceEl.textContent = userFantasyPoints;
+    }
+
+    const profilePointsEl = document.getElementById('stat-points');
+
+    if (profilePointsEl) {
+        profilePointsEl.textContent = userFantasyPoints;
     }
 }
 

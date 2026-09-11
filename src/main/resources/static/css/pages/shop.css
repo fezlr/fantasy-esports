@@ -365,3 +365,15 @@
 .pack-chances-modal__buy:active {
     transform: scale(0.98);
 }
+
+.shop-pack__button:disabled,
+.pack-chances-modal__buy:disabled {
+    background: var(--color-panel-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+}
+
+.shop-pack__button:disabled:active,
+.pack-chances-modal__buy:disabled:active {
+    transform: none;
+}

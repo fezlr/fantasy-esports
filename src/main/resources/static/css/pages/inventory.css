@@ -555,3 +555,29 @@
 .confirm-modal__button:active {
     transform: scale(0.98);
 }
+
+.inventory-header {
+    align-items: flex-start;
+}
+
+.inventory-balance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 7px 10px;
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-md);
+    background: var(--color-panel);
+}
+
+.inventory-balance__value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.inventory-balance__label {
+    margin-top: 2px;
+    font-size: 8px;
+    color: var(--color-text-muted);
+}

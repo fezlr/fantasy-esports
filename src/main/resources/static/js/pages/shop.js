@@ -1,7 +1,11 @@
 let shopPacksCache = [];
+let pendingPurchasePack = null;
+let pendingPurchaseButton = null;
 
 async function initShop() {
     initShopModalHandlers();
+    initPurchaseConfirmModalHandlers();
+    await loadUserFantasyPoints();
     await loadShopPacks();
 }
 
@@ -21,10 +25,11 @@ async function loadShopPacks() {
         }
 
         shopPacksCache = await response.json();
+
         renderShopPacks(shopPacksCache);
     } catch (err) {
         console.error('Failed to load shop packs:', err);
-        container.innerHTML = '<div class="stub"><span class="stub__text">Не удалось загрузить паки</span></div>';
+        container.innerHTML = '<div class="stub"><span class="stub__text">Failed to load shop packs</span></div>';
     }
 }
 
@@ -40,6 +45,7 @@ function renderShopPacks(packs) {
     container.innerHTML = packs.map((pack, index) => {
         const packType = pack.packType.toLowerCase();
         const rarities = sortRarityChances(pack.rarityChances);
+        const canAfford = userFantasyPoints >= pack.cost;
 
         return `
             <article
@@ -73,8 +79,10 @@ function renderShopPacks(packs) {
                     class="shop-pack__button"
                     type="button"
                     data-pack-id="${pack.id}"
+                    data-pack-cost="${pack.cost}"
+                    ${canAfford ? '' : 'disabled'}
                 >
-                    BUY PACK
+                    ${canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS'}
                 </button>
             </article>
         `;
@@ -93,6 +101,17 @@ function renderShopPacks(packs) {
             }
         });
     });
+
+    container.querySelectorAll('.shop-pack__button').forEach(button => {
+        button.addEventListener('click', () => {
+            const packId = Number(button.dataset.packId);
+            const pack = shopPacksCache.find(p => p.id === packId);
+
+            if (pack) {
+                openPurchaseConfirmModal(pack, button);
+            }
+        });
+    });
 }
 
 function openPackChancesModal(pack) {
@@ -101,6 +120,11 @@ function openPackChancesModal(pack) {
 
     const buyButton = document.getElementById('pack-chances-modal-buy');
     buyButton.dataset.packId = pack.id;
+    buyButton.dataset.packCost = pack.cost;
+
+    const canAfford = userFantasyPoints >= pack.cost;
+    buyButton.disabled = !canAfford;
+    buyButton.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
 
     const barsContainer = document.getElementById('pack-chances-modal-bars');
     const rarities = sortRarityChances(pack.rarityChances);
@@ -150,6 +174,104 @@ function closePackChancesModal() {
     document.body.classList.remove('modal-open');
 }
 
+function openPurchaseConfirmModal(pack, button) {
+    pendingPurchasePack = pack;
+    pendingPurchaseButton = button;
+
+    document.getElementById('shop-purchase-confirm-text').textContent =
+        `Are you sure you want to buy ${pack.name} for ${pack.cost} PTS?`;
+
+    const modal = document.getElementById('shop-purchase-confirm-modal');
+
+    modal.hidden = false;
+
+    requestAnimationFrame(() => {
+        modal.classList.add('confirm-modal--open');
+    });
+
+    document.body.classList.add('modal-open');
+}
+
+function closePurchaseConfirmModal() {
+    const modal = document.getElementById('shop-purchase-confirm-modal');
+
+    modal.classList.remove('confirm-modal--open');
+
+    setTimeout(() => {
+        modal.hidden = true;
+    }, 180);
+
+    document.body.classList.remove('modal-open');
+
+    pendingPurchasePack = null;
+    pendingPurchaseButton = null;
+}
+
+function confirmPurchase() {
+    if (!pendingPurchasePack) {
+        return;
+    }
+
+    const pack = pendingPurchasePack;
+    const button = pendingPurchaseButton;
+
+    closePurchaseConfirmModal();
+    purchasePack(pack, button);
+}
+
+async function purchasePack(pack, button) {
+    if (userFantasyPoints < pack.cost) {
+        return;
+    }
+
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = 'PURCHASING...';
+
+    try {
+        const response = await fetch(`/api/v1/cs2/packs/purchase/${pack.id}`, {
+            method: 'POST',
+            headers: {
+                'X-Telegram-Init-Data': Telegram.WebApp.initData
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const result = await response.json();
+        setUserFantasyPoints(result.userFantasyPoints);
+
+        updateAllBuyButtonsState();
+        closePackChancesModal();
+    } catch (err) {
+        console.error('Failed to purchase pack:', err);
+        button.disabled = userFantasyPoints < pack.cost;
+        button.textContent = originalText;
+    }
+}
+
+function updateAllBuyButtonsState() {
+    document.querySelectorAll('.shop-pack__button').forEach(button => {
+        const cost = Number(button.dataset.packCost);
+        const canAfford = userFantasyPoints >= cost;
+
+        button.disabled = !canAfford;
+        button.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
+    });
+
+    const modalBuyButton = document.getElementById('pack-chances-modal-buy');
+
+    if (modalBuyButton && modalBuyButton.dataset.packCost) {
+        const cost = Number(modalBuyButton.dataset.packCost);
+        const canAfford = userFantasyPoints >= cost;
+
+        modalBuyButton.disabled = !canAfford;
+        modalBuyButton.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
+    }
+}
+
 function initShopModalHandlers() {
     document
         .getElementById('pack-chances-modal-backdrop')
@@ -158,10 +280,30 @@ function initShopModalHandlers() {
     document
         .getElementById('pack-chances-modal-close')
         ?.addEventListener('click', closePackChancesModal);
+
+    document
+        .getElementById('pack-chances-modal-buy')
+        ?.addEventListener('click', () => {
+            const button = document.getElementById('pack-chances-modal-buy');
+            const packId = Number(button.dataset.packId);
+            const pack = shopPacksCache.find(p => p.id === packId);
+
+            if (pack) {
+                openPurchaseConfirmModal(pack, button);
+            }
+        });
 }
 
-function sortRarityChances(rarityChances) {
-    return Object.entries(rarityChances).sort(
-        ([a], [b]) => RARITY_ORDER.indexOf(a) - RARITY_ORDER.indexOf(b)
-    );
+function initPurchaseConfirmModalHandlers() {
+    document
+        .getElementById('shop-purchase-confirm-backdrop')
+        ?.addEventListener('click', closePurchaseConfirmModal);
+
+    document
+        .getElementById('shop-purchase-confirm-close')
+        ?.addEventListener('click', closePurchaseConfirmModal);
+
+    document
+        .getElementById('shop-purchase-confirm-yes')
+        ?.addEventListener('click', confirmPurchase);
 }

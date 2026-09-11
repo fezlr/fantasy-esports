@@ -13,7 +13,6 @@ import com.fezlr.fantasy.cs2.packshop.service.PackShopCS2Service;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import com.fezlr.fantasy.user.entity.UserEntity;
 import com.fezlr.fantasy.user.service.UserCS2Service;
-import com.fezlr.fantasy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,6 @@ public class PackCS2Service {
     private final PackShopCS2Service packShopCS2Service;
     private final PackCS2Repository packCS2Repository;
     private final PackCS2Mapper packCS2Mapper;
-    private final UserService userService;
     private final UserCS2Service userCS2Service;
 
     public List<PackCS2Response> findAllPacksByTelegramId(Long telegramId) {
@@ -34,7 +32,6 @@ public class PackCS2Service {
                     .map(packCS2Mapper::toResponse).toList();
     }
 
-    //TODO: add tests and check
     @Transactional
     public PackPurchaseCS2Response purchasePackByUser(UserEntity currentUser, Long shopPackId) {
         if (!currentUser.isEnabled()) {
@@ -47,7 +44,6 @@ public class PackCS2Service {
             throw new PackShopIsNotAvailableException("Pack is not available");
         }
 
-        //TODO: also make a check in frontend (block button if not enough points)
         if (shopPack.getCost() > currentUser.getUserCS2Entity().getFantasyPoints()) {
             throw new NotEnoughFantasyPointsException("Not enough fantasy points");
         }

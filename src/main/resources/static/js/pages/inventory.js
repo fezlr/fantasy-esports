@@ -9,6 +9,7 @@ async function initInventory() {
     initInventoryPackModalHandlers();
     initConfirmModalHandlers();
 
+    await loadUserFantasyPoints();
     await loadInventory();
 }
 
