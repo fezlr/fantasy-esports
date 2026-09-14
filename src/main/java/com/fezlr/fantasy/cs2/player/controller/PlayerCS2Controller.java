@@ -19,7 +19,6 @@ public class PlayerCS2Controller {
     @GetMapping
     public ResponseEntity<List<PlayerCS2Response>> getAllPlayers() {
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(playerCS2Service.findAllPlayers());
+                .ok(playerCS2Service.findAllPlayers());
     }
 }

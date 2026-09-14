@@ -24,6 +24,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
         TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
+
         return ResponseEntity
                 .ok(userMapper.toResponse(userService.createOrUpdate(telegramUser)));
     }

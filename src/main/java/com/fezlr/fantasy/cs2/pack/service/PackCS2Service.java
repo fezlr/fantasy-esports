@@ -28,8 +28,10 @@ public class PackCS2Service {
     private final UserCS2Service userCS2Service;
 
     public List<PackCS2Response> findAllPacksByTelegramId(Long telegramId) {
-        return packCS2Repository.findAllByUserTelegramId(telegramId).stream()
-                    .map(packCS2Mapper::toResponse).toList();
+        return packCS2Repository
+                .findAllByUserTelegramId(telegramId)
+                .stream()
+                .map(packCS2Mapper::toResponse).toList();
     }
 
     @Transactional

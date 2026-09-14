@@ -17,12 +17,16 @@ public class PackShopCS2Service {
     private final PackShopCS2Mapper packShopCS2Mapper;
 
     public List<PackShopCS2Response> findAllAvailablePacks() {
-        return packShopCS2Repository.findAllAvailable().stream()
+        return packShopCS2Repository
+                .findAllAvailable()
+                .stream()
                 .map(packShopCS2Mapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     public PackShopCS2Entity findById(Long shopPackId) {
-        return packShopCS2Repository.findById(shopPackId).orElseThrow(() -> new EntityNotFoundException("Shop pack is not found"));
+        return packShopCS2Repository
+                .findById(shopPackId)
+                .orElseThrow(() -> new EntityNotFoundException("Shop pack is not found"));
     }
 }

@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("Internal Server Error")
                 .message("Unexpected error occurred")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Bad request")
                 .message("Validation failed for one or more fields")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Bad request")
                 .message("Required request header is missing")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .error("Unauthorized")
                 .message("Invalid authentication data")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
                 .message("Entity is not found")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
                 .message("Resource is not found")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not found")
                 .message("Value is not found")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Insufficient funds")
                 .message("Not enough currency")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.FORBIDDEN.value())
                 .error("Forbidden")
                 .message("Insufficient permissions")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);
@@ -170,7 +170,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.SERVICE_UNAVAILABLE.value())
                 .error("Unavailable")
                 .message("Service unavailable")
-                .timestamp(Instant.now().toString())
+                .timestamp(Instant.now())
                 .build();
 
         log.warn("Validation failed: {}", message, e);

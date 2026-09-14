@@ -4,6 +4,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+//TODO: make sql table instead of enum
 @Getter
 public enum TrackedTeam {
     FALCONS(130564L),

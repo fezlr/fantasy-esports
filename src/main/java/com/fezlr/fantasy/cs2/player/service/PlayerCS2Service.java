@@ -23,25 +23,33 @@ public class PlayerCS2Service {
     private final SteamValidator steamValidator;
 
     public PlayerCS2Entity findById(Long playerId) {
-        return playerCS2Repository.findById(playerId).orElseThrow(() -> new EntityNotFoundException("Player is not found"));
+        return playerCS2Repository
+                .findById(playerId)
+                .orElseThrow(() -> new EntityNotFoundException("Player is not found"));
     }
 
     public List<PlayerCS2Response> findAllPlayers() {
-        return playerCS2Repository.findAll().stream()
-                .map(playerCS2Mapper::toResponse).toList();
+        return playerCS2Repository
+                .findAll()
+                .stream()
+                .map(playerCS2Mapper::toResponse)
+                .toList();
     }
 
     public List<PlayerCS2Entity> findAllBySteamIdIsNotNull() {
-        return playerCS2Repository.findAllBySteamIdIsNotNull();
+        return playerCS2Repository
+                .findAllBySteamIdIsNotNull();
     }
 
     public List<PlayerCS2Entity> findAllWithoutGridId() {
-        return playerCS2Repository.findAllByGridIdIsNull();
+        return playerCS2Repository
+                .findAllByGridIdIsNull();
     }
 
     @Transactional
     public void assignGridIdAndSetSteamId(Long id, Long gridId, Long steamId) {
-        PlayerCS2Entity entity = playerCS2Repository.findById(id)
+        PlayerCS2Entity entity = playerCS2Repository
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player is not found"));
 
         if (entity.getGridId() == null) {
@@ -82,11 +90,13 @@ public class PlayerCS2Service {
 
     //TODO refactor: steamId
     public Optional<PlayerCS2Entity> findBySteamId(Long steamId) {
-        return playerCS2Repository.findBySteamId(steamId);
+        return playerCS2Repository
+                .findBySteamId(steamId);
     }
 
     @Transactional
     public void save(PlayerCS2Entity entity) {
-        playerCS2Repository.save(entity);
+        playerCS2Repository
+                .save(entity);
     }
 }

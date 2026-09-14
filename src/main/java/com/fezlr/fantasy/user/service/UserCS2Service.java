@@ -17,14 +17,14 @@ public class UserCS2Service {
 
     @Transactional
     public int subtractFantasyPoints(Long userId, long cost) {
-        return userCS2Repository.subtractFantasyPoints(userId, cost);
+        return userCS2Repository
+                .subtractFantasyPoints(userId, cost);
     }
 
     public UserFantasyPointsResponse findFantasyPointsByUser(UserEntity userEntity) {
         return userCS2Mapper.toFantasyPointsResponse(
                 userCS2Repository
                         .findByUser(userEntity)
-                        .orElseThrow(
-                                () -> new EntityNotFoundException("UserCS2 is not found")));
+                        .orElseThrow(() -> new EntityNotFoundException("UserCS2 is not found")));
     }
 }

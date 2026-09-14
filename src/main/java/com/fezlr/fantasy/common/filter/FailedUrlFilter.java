@@ -20,6 +20,7 @@ public class FailedUrlFilter implements Filter {
 
         int lastDotIndex = path.lastIndexOf('.');
         int lastSlashIndex = path.lastIndexOf('/');
+
         if (lastDotIndex > lastSlashIndex) {
             chain.doFilter(request, response);
             return;

@@ -49,7 +49,7 @@ public class PlayerCS2Entity {
     @Column(name = "last_synced_at", nullable = false)
     private Instant lastSyncedAt;
 
-    //is a player playing currently or not
+    //is a player currently playing or not
     @Column(name = "is_active")
     private boolean isActive;
 }

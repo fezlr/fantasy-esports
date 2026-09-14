@@ -19,7 +19,6 @@ public class TeamCS2Controller {
     @GetMapping
     public ResponseEntity<List<TeamCS2Response>> getAllTeams() {
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(teamCS2Service.findAllTeams());
+                .ok(teamCS2Service.findAllTeams());
     }
 }

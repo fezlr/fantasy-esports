@@ -30,7 +30,8 @@ public class ValveRankingSyncService {
         Integer currentYear = Year.now().getValue();
         List<ValveGitHubFileDto> files = valveRankingClient.fetchFiles(currentYear);
 
-        Optional<ValveGitHubFileDto> latestStandings = files.stream()
+        Optional<ValveGitHubFileDto> latestStandings = files
+                .stream()
                 .filter(valveRankingParser::isGlobalStandings)
                 .max(java.util.Comparator.comparing(valveRankingParser::extractDate));
 

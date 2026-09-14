@@ -21,16 +21,20 @@ public class TeamCS2Service {
     private final TeamCS2Mapper teamCS2Mapper;
 
     public List<TeamCS2Response> findAllTeams() {
-        return teamCS2Repository.findAll().stream()
+        return teamCS2Repository
+                .findAll()
+                .stream()
                 .map(teamCS2Mapper::toResponse).toList();
     }
 
     public List<TeamCS2Entity> findAll() {
-        return teamCS2Repository.findAll();
+        return teamCS2Repository
+                .findAll();
     }
 
     public TeamCS2Entity findByPandaScoreIdOrNull(Long pandaScoreId) {
-        return teamCS2Repository.findByPandaScoreId(pandaScoreId)
+        return teamCS2Repository
+                .findByPandaScoreId(pandaScoreId)
                 .orElse(null);
     }
 
@@ -45,13 +49,15 @@ public class TeamCS2Service {
                 })
                 .orElseGet(() -> {
                     newTeamInfoEntity.setLastSyncedAt(Instant.now());
+
                     return teamCS2Repository.save(newTeamInfoEntity);
                 });
     }
 
     @Transactional
     public void assignGridIdIfMissing(Long teamId, Long gridTeamId) {
-        TeamCS2Entity entity = teamCS2Repository.findById(teamId)
+        TeamCS2Entity entity = teamCS2Repository
+                .findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team is not found"));
 
         if (entity.getGridId() == null) {
@@ -64,7 +70,9 @@ public class TeamCS2Service {
     }
 
     public TeamCS2Entity findById(Long teamId) {
-        return teamCS2Repository.findById(teamId).orElseThrow(() -> new EntityNotFoundException("Team is not found"));
+        return teamCS2Repository
+                .findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team is not found"));
     }
 
     @Transactional
@@ -103,6 +111,7 @@ public class TeamCS2Service {
         team.setVrsPoints(vrsPoints);
         team.setValveRating(valveRating);
         team.setLastValveRatingSyncedAt(rankingDate);
+
         teamCS2Repository.save(team);
     }
 }

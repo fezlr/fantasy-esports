@@ -1,4 +1,4 @@
-app:
+wapp:
   dev-mode: true
 
 spring:

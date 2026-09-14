@@ -18,7 +18,9 @@ public class CardCS2Service {
     private final CardCS2Mapper cardCS2Mapper;
 
     public List<InventoryCardCS2Response> findAllCardsByTelegramId(Long telegramId) {
-        return cardCS2Repository.findAllByUserTelegramId(telegramId).stream()
+        return cardCS2Repository
+                .findAllByUserTelegramId(telegramId)
+                .stream()
                 .map(cardCS2Mapper::toInventoryResponse)
                 .collect(Collectors.toList());
     }

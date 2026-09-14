@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.common.exception.dto;
 
 import lombok.Builder;
+import java.time.Instant;
 
 @Builder
 public record ErrorResponseDto(
@@ -10,6 +11,6 @@ public record ErrorResponseDto(
 
         String message,
 
-        String timestamp
+        Instant timestamp
 ) {
 }

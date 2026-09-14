@@ -24,14 +24,17 @@ public class UserService {
 
     @Transactional
     public UserDetailsImpl loadUserByTelegramId(Long telegramId) {
-        UserEntity entity = userRepository.findByTelegramId(telegramId)
+        UserEntity entity = userRepository
+                .findByTelegramId(telegramId)
                 .orElseThrow(() -> new EntityNotFoundException("Telegram id is not found"));
+
         return new UserDetailsImpl(entity);
     }
 
     @Transactional
     public UserEntity createOrUpdate(@Valid TelegramUserData telegramUser) {
-        return userRepository.findByTelegramId(telegramUser.telegramId())
+        return userRepository
+                .findByTelegramId(telegramUser.telegramId())
                 .map(existing -> {
                     existing.setTelegramUsername(telegramUser.telegramUsername());
                     existing.setLastActiveAt(Instant.now());
@@ -60,7 +63,9 @@ public class UserService {
     }
 
     public UserEntity findByTelegramId(Long telegramId) {
-        return userRepository.findByTelegramId(telegramId).orElseThrow(() -> new EntityNotFoundException("User is not found"));
+        return userRepository
+                .findByTelegramId(telegramId)
+                .orElseThrow(() -> new EntityNotFoundException("User is not found"));
     }
 
 }

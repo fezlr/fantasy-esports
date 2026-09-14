@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class PandaScoreClient {
     @Value("${pandascore.api-key}")
     private String apiKey;
+
     private final PandaScoreClientConfig pandaScoreClientConfig;
 
     public List<PandaScoreTeamRequest> fetchTrackedTeams() {

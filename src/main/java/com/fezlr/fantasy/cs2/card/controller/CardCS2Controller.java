@@ -26,9 +26,9 @@ public class CardCS2Controller {
     @GetMapping
     public ResponseEntity<List<InventoryCardCS2Response>> getAllCardsByCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
         TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
-        UserEntity user = userService.createOrUpdate(telegramUser);
+        UserEntity user = userService.findByTelegramId(telegramUser.telegramId());
+
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(cardCS2Service.findAllCardsByTelegramId(user.getTelegramId()));
+                .ok(cardCS2Service.findAllCardsByTelegramId(user.getTelegramId()));
     }
 }

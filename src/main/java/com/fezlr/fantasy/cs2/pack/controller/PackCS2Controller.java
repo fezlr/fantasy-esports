@@ -2,7 +2,6 @@ package com.fezlr.fantasy.cs2.pack.controller;
 
 import com.fezlr.fantasy.cs2.pack.dto.response.PackCS2Response;
 import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseCS2Response;
-import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseShopCS2Response;
 import com.fezlr.fantasy.cs2.pack.service.PackCS2Service;
 import com.fezlr.fantasy.telegram.security.InitDataValidator;
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
@@ -29,8 +28,7 @@ public class PackCS2Controller {
         UserEntity currentUser = userService.findByTelegramId(telegramUserData.telegramId());
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(packCS2Service.findAllPacksByTelegramId(currentUser.getTelegramId()));
+                .ok(packCS2Service.findAllPacksByTelegramId(currentUser.getTelegramId()));
     }
 
 
@@ -40,7 +38,6 @@ public class PackCS2Controller {
         UserEntity currentUser = userService.findByTelegramId(telegramUserData.telegramId());
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(packCS2Service.purchasePackByUser(currentUser, shopPackId));
+                .ok(packCS2Service.purchasePackByUser(currentUser, shopPackId));
     }
 }

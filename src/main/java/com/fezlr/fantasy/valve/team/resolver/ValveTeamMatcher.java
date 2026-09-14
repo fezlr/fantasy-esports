@@ -2,7 +2,6 @@ package com.fezlr.fantasy.valve.team.resolver;
 
 import com.fezlr.fantasy.cs2.team.entity.TeamCS2Entity;
 import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

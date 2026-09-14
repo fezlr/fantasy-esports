@@ -16,7 +16,8 @@ public class ValveHistoryService {
     private final TeamCS2Service teamCS2Service;
 
     public boolean existsByRankingDate(LocalDate rankingDate) {
-        return valveHistoryRepository.existsByRankingDate(rankingDate);
+        return valveHistoryRepository
+                .existsByRankingDate(rankingDate);
     }
 
     @Transactional
