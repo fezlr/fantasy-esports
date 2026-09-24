@@ -1,10 +1,12 @@
 package com.fezlr.fantasy.cs2.card.service;
 
 import com.fezlr.fantasy.cs2.card.dto.response.InventoryCardCS2Response;
+import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
 import com.fezlr.fantasy.cs2.card.mapper.CardCS2Mapper;
 import com.fezlr.fantasy.cs2.card.repository.CardCS2Repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -23,5 +25,10 @@ public class CardCS2Service {
                 .stream()
                 .map(cardCS2Mapper::toInventoryResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void save(CardCS2Entity card) {
+        cardCS2Repository.save(card);
     }
 }

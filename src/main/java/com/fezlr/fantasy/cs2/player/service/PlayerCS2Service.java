@@ -99,4 +99,10 @@ public class PlayerCS2Service {
         playerCS2Repository
                 .save(entity);
     }
+
+    public PlayerCS2Entity findRandomActivePlayer() {
+        return playerCS2Repository
+                .findRandomActivePlayer()
+                .orElseThrow(() -> new EntityNotFoundException("No active player is available"));
+    }
 }
