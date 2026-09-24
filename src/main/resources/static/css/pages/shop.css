@@ -377,3 +377,114 @@
 .pack-chances-modal__buy:disabled:active {
     transform: none;
 }
+
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+}
+
+.confirm-modal--open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-modal[hidden] {
+    display: none;
+}
+
+.confirm-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.confirm-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(320px, 100%);
+    padding: 20px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    text-align: center;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.confirm-modal--open .confirm-modal__panel {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.confirm-modal__text-box {
+    padding: 14px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-panel-border);
+    border-radius: var(--radius-md);
+}
+
+.confirm-modal__text {
+    display: block;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text);
+}
+
+.confirm-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.confirm-modal__button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-modal__button--cancel {
+    order: 2;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-panel-border);
+}
+
+.confirm-modal__button--confirm {
+    order: 1;
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+.confirm-modal__button:active {
+    transform: scale(0.98);
+}
+
+.confirm-modal__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.confirm-modal__button:disabled:active {
+    transform: none;
+}
+
+.modal-open {
+    overflow: hidden;
+}

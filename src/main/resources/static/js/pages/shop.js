@@ -1,51 +1,243 @@
 let shopPacksCache = [];
 let pendingPurchasePack = null;
 let pendingPurchaseButton = null;
+let shopEventsInitialized = false;
 
 async function initShop() {
-    initShopModalHandlers();
-    initPurchaseConfirmModalHandlers();
+    initShopEvents();
+
     await loadUserFantasyPoints();
     await loadShopPacks();
 }
 
+function initShopEvents() {
+    if (shopEventsInitialized) {
+        return;
+    }
+
+    shopEventsInitialized = true;
+
+    document.addEventListener('click', event => {
+        const shopContainer = document.getElementById('shop-packs');
+
+        const chancesBuyButton = event.target.closest(
+            '#pack-chances-modal-buy'
+        );
+
+        if (chancesBuyButton) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const packIndex = Number(
+                chancesBuyButton.dataset.packIndex
+            );
+
+            if (Number.isNaN(packIndex)) {
+                console.error(
+                    'Pack index not found on chances buy button'
+                );
+                return;
+            }
+
+            const pack = shopPacksCache[packIndex];
+
+            if (!pack) {
+                console.error(
+                    'Pack not found at index:',
+                    packIndex
+                );
+                return;
+            }
+
+            if (userFantasyPoints < pack.cost) {
+                return;
+            }
+
+            closePackChancesModal();
+
+            setTimeout(() => {
+                openPurchaseConfirmModal(
+                    pack,
+                    chancesBuyButton
+                );
+            }, 45);
+
+            return;
+        }
+
+        if (
+            event.target.closest(
+                '#pack-chances-modal-backdrop'
+            ) ||
+            event.target.closest(
+                '#pack-chances-modal-close'
+            )
+        ) {
+            closePackChancesModal();
+            return;
+        }
+
+        const packButton = event.target.closest(
+            '.shop-pack__button'
+        );
+
+        if (
+            packButton &&
+            shopContainer &&
+            shopContainer.contains(packButton)
+        ) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const packIndex = Number(
+                packButton.dataset.packIndex
+            );
+
+            if (Number.isNaN(packIndex)) {
+                return;
+            }
+
+            const pack = shopPacksCache[packIndex];
+
+            if (!pack) {
+                return;
+            }
+
+            if (userFantasyPoints < pack.cost) {
+                return;
+            }
+
+            openPurchaseConfirmModal(
+                pack,
+                packButton
+            );
+
+            return;
+        }
+
+        const packCard = event.target.closest('.shop-pack');
+
+        if (
+            packCard &&
+            shopContainer &&
+            shopContainer.contains(packCard)
+        ) {
+            const packIndex = Number(
+                packCard.dataset.packIndex
+            );
+
+            if (Number.isNaN(packIndex)) {
+                return;
+            }
+
+            const pack = shopPacksCache[packIndex];
+
+            if (!pack) {
+                return;
+            }
+
+            openPackChancesModal(pack);
+
+            return;
+        }
+
+        if (
+            event.target.closest(
+                '#shop-purchase-confirm-backdrop'
+            ) ||
+            event.target.closest(
+                '#shop-purchase-confirm-close'
+            )
+        ) {
+            closePurchaseConfirmModal();
+            return;
+        }
+
+        if (
+            event.target.closest(
+                '#shop-purchase-confirm-yes'
+            )
+        ) {
+            confirmPurchase();
+        }
+    });
+}
+
 async function loadShopPacks() {
     const container = document.getElementById('shop-packs');
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
 
     try {
-        const response = await fetch('/api/v1/cs2/shop/packs', {
-            headers: {
-                'X-Telegram-Init-Data': Telegram.WebApp.initData
+        const response = await fetch(
+            '/api/v1/cs2/shop/packs',
+            {
+                headers: {
+                    'X-Telegram-Init-Data':
+                        Telegram.WebApp.initData
+                }
             }
-        });
+        );
 
         if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
+            throw new Error(
+                `Request failed with status ${response.status}`
+            );
         }
 
         shopPacksCache = await response.json();
 
         renderShopPacks(shopPacksCache);
     } catch (err) {
-        console.error('Failed to load shop packs:', err);
-        container.innerHTML = '<div class="stub"><span class="stub__text">Failed to load shop packs</span></div>';
+        console.error(
+            'Failed to load shop packs:',
+            err
+        );
+
+        container.innerHTML = `
+            <div class="stub">
+                <span class="stub__text">
+                    Failed to load shop packs
+                </span>
+            </div>
+        `;
     }
 }
 
 function renderShopPacks(packs) {
-    const container = document.getElementById('shop-packs');
-    if (!container) return;
+    const container = document.getElementById(
+        'shop-packs'
+    );
+
+    if (!container) {
+        return;
+    }
 
     if (!packs.length) {
-        container.innerHTML = '<div class="stub"><span class="stub__text">Паки недоступны</span></div>';
+        container.innerHTML = `
+            <div class="stub">
+                <span class="stub__text">
+                    Паки недоступны
+                </span>
+            </div>
+        `;
+
         return;
     }
 
     container.innerHTML = packs.map((pack, index) => {
-        const packType = pack.packType.toLowerCase();
-        const rarities = sortRarityChances(pack.rarityChances);
-        const canAfford = userFantasyPoints >= pack.cost;
+        const packType =
+            pack.packType.toLowerCase();
+
+        const rarities =
+            sortRarityChances(
+                pack.rarityChances
+            );
+
+        const canAfford =
+            userFantasyPoints >= pack.cost;
 
         return `
             <article
@@ -53,155 +245,289 @@ function renderShopPacks(packs) {
                 data-pack-index="${index}"
             >
                 <div class="shop-pack__visual">
-                    <div class="shop-pack__icon">${pack.packType.charAt(0)}</div>
+                    <div class="shop-pack__icon">
+                        ${pack.packType.charAt(0)}
+                    </div>
                 </div>
 
                 <div class="shop-pack__info">
                     <div>
-                        <div class="shop-pack__name">${escapeHtml(pack.name)}</div>
+                        <div class="shop-pack__name">
+                            ${escapeHtml(pack.name)}
+                        </div>
+
                         <div class="shop-pack__description">
                             ${escapeHtml(pack.description)}
                         </div>
                     </div>
 
-                    <span class="shop-pack__price">${pack.cost} PTS</span>
+                    <span class="shop-pack__price">
+                        ${pack.cost} PTS
+                    </span>
                 </div>
 
                 <div class="shop-pack__rarities">
-                    ${rarities.map(([rarity, chance]) => `
-                        <span class="shop-pack__rarity shop-pack__rarity--${rarity.toLowerCase()}">
-                            ${rarity} ${chance}%
-                        </span>
-                    `).join('')}
+                    ${rarities.map(
+                        ([rarity, chance]) => `
+                            <span
+                                class="
+                                    shop-pack__rarity
+                                    shop-pack__rarity--${rarity.toLowerCase()}
+                                "
+                            >
+                                ${rarity} ${chance}%
+                            </span>
+                        `
+                    ).join('')}
                 </div>
 
                 <button
                     class="shop-pack__button"
                     type="button"
-                    data-pack-id="${pack.id}"
+                    data-pack-index="${index}"
                     data-pack-cost="${pack.cost}"
-                    ${canAfford ? '' : 'disabled'}
                 >
-                    ${canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS'}
+                    ${
+                        canAfford
+                            ? 'BUY PACK'
+                            : 'NOT ENOUGH POINTS'
+                    }
                 </button>
             </article>
         `;
     }).join('');
 
-    container.querySelectorAll('.shop-pack').forEach(card => {
-        card.addEventListener('click', event => {
-            if (event.target.closest('.shop-pack__button')) {
-                return;
-            }
-
-            const pack = shopPacksCache[Number(card.dataset.packIndex)];
-
-            if (pack) {
-                openPackChancesModal(pack);
-            }
-        });
-    });
-
-    container.querySelectorAll('.shop-pack__button').forEach(button => {
-        button.addEventListener('click', () => {
-            const packId = Number(button.dataset.packId);
-            const pack = shopPacksCache.find(p => p.id === packId);
-
-            if (pack) {
-                openPurchaseConfirmModal(pack, button);
-            }
-        });
-    });
+    updateAllBuyButtonsState();
 }
 
 function openPackChancesModal(pack) {
-    document.getElementById('pack-chances-modal-name').textContent = pack.name;
-    document.getElementById('pack-chances-modal-price').textContent = `${pack.cost} PTS`;
+    const modal = document.getElementById(
+        'pack-chances-modal'
+    );
 
-    const buyButton = document.getElementById('pack-chances-modal-buy');
-    buyButton.dataset.packId = pack.id;
-    buyButton.dataset.packCost = pack.cost;
+    if (!modal) {
+        return;
+    }
 
-    const canAfford = userFantasyPoints >= pack.cost;
+    const nameElement = document.getElementById(
+        'pack-chances-modal-name'
+    );
+
+    const priceElement = document.getElementById(
+        'pack-chances-modal-price'
+    );
+
+    const buyButton = document.getElementById(
+        'pack-chances-modal-buy'
+    );
+
+    const barsContainer = document.getElementById(
+        'pack-chances-modal-bars'
+    );
+
+    if (
+        !nameElement ||
+        !priceElement ||
+        !buyButton ||
+        !barsContainer
+    ) {
+        return;
+    }
+
+    const packIndex =
+        shopPacksCache.indexOf(pack);
+
+    if (packIndex === -1) {
+        return;
+    }
+
+    nameElement.textContent = pack.name;
+
+    priceElement.textContent =
+        `${pack.cost} PTS`;
+
+    buyButton.dataset.packIndex =
+        String(packIndex);
+
+    buyButton.dataset.packCost =
+        String(pack.cost);
+
+    const canAfford =
+        userFantasyPoints >= pack.cost;
+
     buyButton.disabled = !canAfford;
-    buyButton.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
 
-    const barsContainer = document.getElementById('pack-chances-modal-bars');
-    const rarities = sortRarityChances(pack.rarityChances);
+    buyButton.textContent = canAfford
+        ? 'BUY PACK'
+        : 'NOT ENOUGH POINTS';
 
-    barsContainer.innerHTML = rarities.map(([rarity, chance]) => `
-        <div class="pack-chance-bar pack-chance-bar--${rarity.toLowerCase()}">
-            <div class="pack-chance-bar__top">
-                <span>${rarity}</span>
-                <span class="pack-chance-bar__percent">${chance}%</span>
-            </div>
-            <div class="pack-chance-bar__track">
-                <div class="pack-chance-bar__fill" data-target-width="${chance}"></div>
-            </div>
-        </div>
-    `).join('');
+    const rarities =
+        sortRarityChances(
+            pack.rarityChances
+        );
 
-    const modal = document.getElementById('pack-chances-modal');
+    barsContainer.innerHTML =
+        rarities.map(
+            ([rarity, chance]) => `
+                <div
+                    class="
+                        pack-chance-bar
+                        pack-chance-bar--${rarity.toLowerCase()}
+                    "
+                >
+                    <div class="pack-chance-bar__top">
+                        <span>${rarity}</span>
+
+                        <span class="pack-chance-bar__percent">
+                            ${chance}%
+                        </span>
+                    </div>
+
+                    <div class="pack-chance-bar__track">
+                        <div
+                            class="pack-chance-bar__fill"
+                            data-target-width="${chance}"
+                        ></div>
+                    </div>
+                </div>
+            `
+        ).join('');
 
     modal.hidden = false;
 
     requestAnimationFrame(() => {
-        modal.classList.add('pack-chances-modal--open');
+        modal.classList.add(
+            'pack-chances-modal--open'
+        );
 
         requestAnimationFrame(() => {
-            barsContainer.querySelectorAll('.pack-chance-bar__fill').forEach(fill => {
-                fill.style.width = `${fill.dataset.targetWidth}%`;
-            });
+            barsContainer
+                .querySelectorAll(
+                    '.pack-chance-bar__fill'
+                )
+                .forEach(fill => {
+                    fill.style.width =
+                        `${fill.dataset.targetWidth}%`;
+                });
         });
     });
 
-    document.body.classList.add('modal-open');
+    document.body.classList.add(
+        'modal-open'
+    );
 }
 
 function closePackChancesModal() {
-    const modal = document.getElementById('pack-chances-modal');
+    const modal = document.getElementById(
+        'pack-chances-modal'
+    );
 
-    modal.classList.remove('pack-chances-modal--open');
+    if (!modal) {
+        return;
+    }
 
-    document.querySelectorAll('.pack-chance-bar__fill').forEach(fill => {
-        fill.style.width = '0';
-    });
+    modal.classList.remove(
+        'pack-chances-modal--open'
+    );
+
+    modal
+        .querySelectorAll(
+            '.pack-chance-bar__fill'
+        )
+        .forEach(fill => {
+            fill.style.width = '0';
+        });
 
     setTimeout(() => {
         modal.hidden = true;
     }, 180);
 
-    document.body.classList.remove('modal-open');
+    document.body.classList.remove(
+        'modal-open'
+    );
 }
 
-function openPurchaseConfirmModal(pack, button) {
+function openPurchaseConfirmModal(
+    pack,
+    button
+) {
+    const modal = document.getElementById(
+        'shop-purchase-confirm-modal'
+    );
+
+    const textElement =
+        document.getElementById(
+            'shop-purchase-confirm-text'
+        );
+
+    const yesButton =
+        document.getElementById(
+            'shop-purchase-confirm-yes'
+        );
+
+    const closeButton =
+        document.getElementById(
+            'shop-purchase-confirm-close'
+        );
+
+    if (
+        !modal ||
+        !textElement ||
+        !yesButton ||
+        !closeButton
+    ) {
+        console.error(
+            'Purchase confirmation modal elements not found'
+        );
+
+        return;
+    }
+
     pendingPurchasePack = pack;
     pendingPurchaseButton = button;
 
-    document.getElementById('shop-purchase-confirm-text').textContent =
-        `Are you sure you want to buy ${pack.name} for ${pack.cost} PTS?`;
+    textElement.textContent =
+        `Are you sure you want to buy ${pack.packType}?`;
 
-    const modal = document.getElementById('shop-purchase-confirm-modal');
+    yesButton.disabled = false;
+    yesButton.textContent = 'YES';
+
+    closeButton.disabled = false;
+    closeButton.textContent = 'CLOSE';
 
     modal.hidden = false;
 
     requestAnimationFrame(() => {
-        modal.classList.add('confirm-modal--open');
+        modal.classList.add(
+            'confirm-modal--open'
+        );
     });
 
-    document.body.classList.add('modal-open');
+    document.body.classList.add(
+        'modal-open'
+    );
 }
 
 function closePurchaseConfirmModal() {
-    const modal = document.getElementById('shop-purchase-confirm-modal');
+    const modal = document.getElementById(
+        'shop-purchase-confirm-modal'
+    );
 
-    modal.classList.remove('confirm-modal--open');
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove(
+        'confirm-modal--open'
+    );
 
     setTimeout(() => {
         modal.hidden = true;
     }, 180);
 
-    document.body.classList.remove('modal-open');
+    document.body.classList.remove(
+        'modal-open'
+    );
 
     pendingPurchasePack = null;
     pendingPurchaseButton = null;
@@ -212,98 +538,67 @@ function confirmPurchase() {
         return;
     }
 
-    const pack = pendingPurchasePack;
-    const button = pendingPurchaseButton;
+    if (
+        userFantasyPoints <
+        pendingPurchasePack.cost
+    ) {
+        closePurchaseConfirmModal();
 
-    closePurchaseConfirmModal();
-    purchasePack(pack, button);
-}
+        updateAllBuyButtonsState();
 
-async function purchasePack(pack, button) {
-    if (userFantasyPoints < pack.cost) {
         return;
     }
 
-    button.disabled = true;
-    const originalText = button.textContent;
-    button.textContent = 'PURCHASING...';
+    closePurchaseConfirmModal();
 
-    try {
-        const response = await fetch(`/api/v1/cs2/packs/purchase/${pack.id}`, {
-            method: 'POST',
-            headers: {
-                'X-Telegram-Init-Data': Telegram.WebApp.initData
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const result = await response.json();
-        setUserFantasyPoints(result.userFantasyPoints);
-
-        updateAllBuyButtonsState();
-        closePackChancesModal();
-    } catch (err) {
-        console.error('Failed to purchase pack:', err);
-        button.disabled = userFantasyPoints < pack.cost;
-        button.textContent = originalText;
-    }
+    // Purchase logic will be added here.
 }
 
 function updateAllBuyButtonsState() {
-    document.querySelectorAll('.shop-pack__button').forEach(button => {
-        const cost = Number(button.dataset.packCost);
-        const canAfford = userFantasyPoints >= cost;
-
-        button.disabled = !canAfford;
-        button.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
-    });
-
-    const modalBuyButton = document.getElementById('pack-chances-modal-buy');
-
-    if (modalBuyButton && modalBuyButton.dataset.packCost) {
-        const cost = Number(modalBuyButton.dataset.packCost);
-        const canAfford = userFantasyPoints >= cost;
-
-        modalBuyButton.disabled = !canAfford;
-        modalBuyButton.textContent = canAfford ? 'BUY PACK' : 'NOT ENOUGH POINTS';
-    }
-}
-
-function initShopModalHandlers() {
     document
-        .getElementById('pack-chances-modal-backdrop')
-        ?.addEventListener('click', closePackChancesModal);
+        .querySelectorAll(
+            '.shop-pack__button'
+        )
+        .forEach(button => {
+            const cost =
+                Number(
+                    button.dataset.packCost
+                );
 
-    document
-        .getElementById('pack-chances-modal-close')
-        ?.addEventListener('click', closePackChancesModal);
+            const canAfford =
+                userFantasyPoints >= cost;
 
-    document
-        .getElementById('pack-chances-modal-buy')
-        ?.addEventListener('click', () => {
-            const button = document.getElementById('pack-chances-modal-buy');
-            const packId = Number(button.dataset.packId);
-            const pack = shopPacksCache.find(p => p.id === packId);
+            button.disabled = false;
 
-            if (pack) {
-                openPurchaseConfirmModal(pack, button);
-            }
+            button.textContent =
+                canAfford
+                    ? 'BUY PACK'
+                    : 'NOT ENOUGH POINTS';
         });
-}
 
-function initPurchaseConfirmModalHandlers() {
-    document
-        .getElementById('shop-purchase-confirm-backdrop')
-        ?.addEventListener('click', closePurchaseConfirmModal);
+    const modalBuyButton =
+        document.getElementById(
+            'pack-chances-modal-buy'
+        );
 
-    document
-        .getElementById('shop-purchase-confirm-close')
-        ?.addEventListener('click', closePurchaseConfirmModal);
+    if (
+        modalBuyButton &&
+        modalBuyButton.dataset.packCost
+    ) {
+        const cost =
+            Number(
+                modalBuyButton.dataset.packCost
+            );
 
-    document
-        .getElementById('shop-purchase-confirm-yes')
-        ?.addEventListener('click', confirmPurchase);
+        const canAfford =
+            userFantasyPoints >= cost;
+
+        modalBuyButton.disabled =
+            !canAfford;
+
+        modalBuyButton.textContent =
+            canAfford
+                ? 'BUY PACK'
+                : 'NOT ENOUGH POINTS';
+    }
 }

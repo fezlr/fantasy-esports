@@ -44,6 +44,7 @@ public class PackCS2Service {
                 .map(packCS2Mapper::toResponse).toList();
     }
 
+    //TODO: make throws like markPackAsOpened(pack); like in openPackByUser
     @Transactional
     public PackPurchaseCS2Response purchasePackByUser(UserEntity currentUser, Long shopPackId) {
         if (!currentUser.isEnabled()) {
