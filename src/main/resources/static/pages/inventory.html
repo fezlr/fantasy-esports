@@ -55,18 +55,11 @@
                  alt="">
 
             <div class="player-card-modal__info">
+                <span class="player-card-modal__nickname" id="inventory-modal-nickname"></span>
 
-    <span class="player-card-modal__nickname" id="inventory-modal-nickname">
+                <span class="player-card-modal__team" id="inventory-modal-team"></span>
 
-    </span>
-
-                <span class="player-card-modal__team" id="inventory-modal-team">
-
-                </span>
-
-                <span class="player-card-modal__rarity" id="inventory-modal-rarity">
-
-                </span>
+                <span class="player-card-modal__rarity" id="inventory-modal-rarity"></span>
             </div>
         </div>
 
@@ -108,18 +101,48 @@
             <button
                     class="confirm-modal__button confirm-modal__button--confirm"
                     id="pack-open-confirm-yes"
-                    type="button"
-            >
-                YES
-            </button>
+                    type="button">YES</button>
 
             <button
                     class="confirm-modal__button confirm-modal__button--cancel"
                     id="pack-open-confirm-close"
-                    type="button"
-            >
-                CLOSE
-            </button>
+                    type="button">CLOSE</button>
         </div>
+    </div>
+</div>
+
+<div class="pack-reveal-modal" id="pack-reveal-modal" hidden>
+    <div class="pack-reveal-modal__backdrop"></div>
+
+    <div class="pack-reveal-modal__panel">
+        <div class="pack-reveal__stage">
+            <div class="pack-reveal__pack" id="pack-reveal-pack">
+                <div class="pack-reveal__pack-icon" id="pack-reveal-pack-icon"></div>
+            </div>
+
+            <div class="pack-reveal__flash" id="pack-reveal-flash"></div>
+
+            <div class="pack-reveal__card" id="pack-reveal-card" hidden>
+                <div class="pack-reveal__card-visual" id="pack-reveal-card-visual">
+                    <img class="pack-reveal__card-image" id="pack-reveal-card-image" src="" alt="">
+
+                    <img class="pack-reveal__card-team-logo" id="pack-reveal-card-team-logo" src="" alt="">
+
+                    <span class="pack-reveal__card-rarity" id="pack-reveal-card-rarity"></span>
+                </div>
+
+                <span class="pack-reveal__card-nickname" id="pack-reveal-card-nickname"></span>
+                <span class="pack-reveal__card-team" id="pack-reveal-card-team"></span>
+                <span class="pack-reveal__card-points" id="pack-reveal-card-points"></span>
+            </div>
+        </div>
+
+        <span class="pack-reveal__title" id="pack-reveal-title" hidden>YOU GOT</span>
+
+        <button
+                class="pack-reveal__close"
+                id="pack-reveal-close"
+                type="button"
+                hidden>CONTINUE</button>
     </div>
 </div>

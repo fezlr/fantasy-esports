@@ -1,13 +1,14 @@
 let inventoryCards = [];
 let inventoryPacks = [];
 let inventoryPackGroups = [];
-let pendingOpenPackId = null;
+let pendingOpenPack = null;
 
 async function initInventory() {
     initInventoryTabs();
     initInventoryModalHandlers();
     initInventoryPackModalHandlers();
     initConfirmModalHandlers();
+    initPackRevealModalHandlers();
 
     await loadUserFantasyPoints();
     await loadInventory();
@@ -254,7 +255,7 @@ function renderInventoryPacks() {
             const group = inventoryPackGroups[index];
 
             if (group) {
-                openConfirmModal(group.items[0].id, group.name);
+                openConfirmModal(group.items[0].id, group.name, group.packType);
             }
         });
     });
@@ -346,6 +347,7 @@ function openInventoryPackModal(group) {
     const openButton = document.getElementById('inventory-pack-chances-modal-open');
     openButton.dataset.packId = group.items[0].id;
     openButton.dataset.packName = group.name;
+    openButton.dataset.packType = group.packType;
 
     const barsContainer = document.getElementById('inventory-pack-chances-modal-bars');
     const rarities = sortRarityChances(group.rarityChances);
@@ -395,8 +397,8 @@ function closeInventoryPackModal() {
     document.body.classList.remove('modal-open');
 }
 
-function openConfirmModal(packId, packName) {
-    pendingOpenPackId = packId;
+function openConfirmModal(packId, packName, packType) {
+    pendingOpenPack = { id: packId, name: packName, packType: packType };
 
     document.getElementById('pack-open-confirm-text').textContent =
         `Are you sure you want to open ${packName}?`;
@@ -423,20 +425,142 @@ function closeConfirmModal() {
 
     document.body.classList.remove('modal-open');
 
-    pendingOpenPackId = null;
+    pendingOpenPack = null;
 }
 
 function confirmOpenPack() {
-    if (pendingOpenPackId === null) {
+    if (!pendingOpenPack) {
         return;
     }
 
-    openPack(pendingOpenPackId);
+    const pack = pendingOpenPack;
+
     closeConfirmModal();
+    openPack(pack.id, pack.packType);
 }
 
-function openPack(packId) {
-    console.log('TODO: request to open pack', packId);
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function openPack(packId, packType) {
+    showPackRevealModal(packType);
+
+    try {
+        const [response] = await Promise.all([
+            fetch(`/api/v1/cs2/packs/${packId}/open`, {
+                method: 'POST',
+                headers: {
+                    'X-Telegram-Init-Data': Telegram.WebApp.initData
+                }
+            }),
+            wait(1100)
+        ]);
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.userFantasyPoints !== undefined) {
+            setUserFantasyPoints(result.userFantasyPoints);
+        }
+
+        revealPackResult(result);
+    } catch (error) {
+        console.error('Failed to open pack:', error);
+        closePackRevealModal();
+    }
+}
+
+function showPackRevealModal(packType) {
+    const packIcon = document.getElementById('pack-reveal-pack-icon');
+    const packWrap = document.getElementById('pack-reveal-pack');
+    const cardEl = document.getElementById('pack-reveal-card');
+    const titleEl = document.getElementById('pack-reveal-title');
+    const closeBtn = document.getElementById('pack-reveal-close');
+    const flashEl = document.getElementById('pack-reveal-flash');
+
+    packIcon.textContent = packType.charAt(0);
+    packIcon.className = `pack-reveal__pack-icon pack-reveal__pack-icon--${packType.toLowerCase()} pack-reveal__pack-icon--shaking`;
+
+    packWrap.classList.remove('pack-reveal__pack--hidden');
+    cardEl.hidden = true;
+    cardEl.classList.remove('pack-reveal__card--visible');
+    titleEl.hidden = true;
+    closeBtn.hidden = true;
+    flashEl.classList.remove('pack-reveal__flash--active');
+
+    const modal = document.getElementById('pack-reveal-modal');
+
+    modal.hidden = false;
+
+    requestAnimationFrame(() => {
+        modal.classList.add('pack-reveal-modal--open');
+    });
+
+    document.body.classList.add('modal-open');
+}
+
+function revealPackResult(result) {
+    const packWrap = document.getElementById('pack-reveal-pack');
+    const flashEl = document.getElementById('pack-reveal-flash');
+    const cardEl = document.getElementById('pack-reveal-card');
+    const titleEl = document.getElementById('pack-reveal-title');
+    const closeBtn = document.getElementById('pack-reveal-close');
+
+    packWrap.classList.add('pack-reveal__pack--hidden');
+    flashEl.classList.add('pack-reveal__flash--active');
+
+    setTimeout(() => {
+        const rarity = normalizeRarity(result.rarity);
+        const player = result.player;
+
+        document.getElementById('pack-reveal-card-image').src =
+            player.imageUrl || placeholderImg(200);
+
+        document.getElementById('pack-reveal-card-team-logo').src =
+            player.teamLogoUrl || placeholderImg(40);
+
+        document.getElementById('pack-reveal-card-rarity').textContent =
+            rarity.toUpperCase();
+
+        document.getElementById('pack-reveal-card-nickname').textContent =
+            player.nickname;
+
+        document.getElementById('pack-reveal-card-team').textContent =
+            player.teamName || 'Unknown team';
+
+        document.getElementById('pack-reveal-card-points').textContent =
+            `${player.playerStatistic?.rating ?? '—'} PTS`;
+
+        const cardVisual = document.getElementById('pack-reveal-card-visual');
+        cardVisual.className = `pack-reveal__card-visual pack-reveal__card-visual--${rarity}`;
+
+        cardEl.hidden = false;
+        titleEl.hidden = false;
+        closeBtn.hidden = false;
+
+        requestAnimationFrame(() => {
+            cardEl.classList.add('pack-reveal__card--visible');
+        });
+    }, 250);
+}
+
+function closePackRevealModal() {
+    const modal = document.getElementById('pack-reveal-modal');
+
+    modal.classList.remove('pack-reveal-modal--open');
+
+    setTimeout(() => {
+        modal.hidden = true;
+    }, 180);
+
+    document.body.classList.remove('modal-open');
+
+    loadInventoryCards();
+    loadInventoryPacks();
 }
 
 function initInventoryModalHandlers() {
@@ -464,9 +588,10 @@ function initInventoryPackModalHandlers() {
             const button = document.getElementById('inventory-pack-chances-modal-open');
             const packId = Number(button.dataset.packId);
             const packName = button.dataset.packName;
+            const packType = button.dataset.packType;
 
             closeInventoryPackModal();
-            openConfirmModal(packId, packName);
+            openConfirmModal(packId, packName, packType);
         });
 }
 
@@ -482,6 +607,12 @@ function initConfirmModalHandlers() {
     document
         .getElementById('pack-open-confirm-yes')
         ?.addEventListener('click', confirmOpenPack);
+}
+
+function initPackRevealModalHandlers() {
+    document
+        .getElementById('pack-reveal-close')
+        ?.addEventListener('click', closePackRevealModal);
 }
 
 function normalizeRarity(rarity) {

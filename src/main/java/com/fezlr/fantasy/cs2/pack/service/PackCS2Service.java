@@ -93,14 +93,20 @@ public class PackCS2Service {
         validateNotOpened(pack);
 
         Rarity rolledRarity = packRarityRollerService.roll(pack.getPackShopCS2().getDropChances());
-
         PlayerCS2Entity player = playerCS2Service
                 .findRandomActivePlayer();
 
         saveDroppedCard(currentUser, player, rolledRarity);
+
+        deletePack(currentUser, pack);
+
         markPackAsOpened(pack);
 
         return packCS2Mapper.toOpenResultResponse(rolledRarity, player);
+    }
+
+    private void deletePack(UserEntity currentUser, PackCS2Entity pack) {
+        currentUser.getUserCS2Entity().getPacksCS2().remove(pack);
     }
 
     private void markPackAsOpened(PackCS2Entity pack) {

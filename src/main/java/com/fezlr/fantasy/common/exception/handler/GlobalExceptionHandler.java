@@ -179,4 +179,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(message);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalStateException(IllegalStateException e) {
+        var message = ErrorResponseDto.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message("Conflict occurred")
+                .timestamp(Instant.now())
+                .build();
+
+        log.warn("Validation failed: {}", message, e);
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(message);
+    }
+
+
 }

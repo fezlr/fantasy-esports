@@ -29,7 +29,8 @@ public class PackCS2Mapper {
                 .cost(entity.getPackShopCS2().getCost())
                 .rarityChances(packDrop.stream().collect(Collectors.toMap(
                                 PackDropCS2ChanceEntity::getRarity,
-                                PackDropCS2ChanceEntity::getChance)))
+                                PackDropCS2ChanceEntity::getChance,
+                                (existingValue, newValue) -> existingValue)))
                 .build();
     }
 

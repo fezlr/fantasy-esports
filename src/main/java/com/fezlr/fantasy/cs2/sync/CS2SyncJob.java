@@ -21,16 +21,16 @@ public class CS2SyncJob {
         log.info("Starting syncAll..");
 
         //pandascore api
-        pandaScoreSyncJob.syncTeamsAndPlayers();
+//        pandaScoreSyncJob.syncTeamsAndPlayers();
 
         //grid api
-        gridSyncJob.syncMissingGridIdPlayers();
-        gridSyncJob.syncMissingGridIdTeams();
-        gridSyncJob.syncTeamSeries();
-        gridSyncJob.calculatePlayerStatistics();
+//        gridSyncJob.syncMissingGridIdPlayers();
+//        gridSyncJob.syncMissingGridIdTeams();
+//        gridSyncJob.syncTeamSeries();
+//        gridSyncJob.calculatePlayerStatistics();
 
         //valve rankings
-        valveSyncJob.syncTeamCS2ValveRankings();
+//        valveSyncJob.syncTeamCS2ValveRankings();
 
         log.info("Ending syncAll...");
     }

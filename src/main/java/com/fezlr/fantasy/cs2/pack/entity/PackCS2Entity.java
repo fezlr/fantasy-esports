@@ -32,6 +32,6 @@ public class PackCS2Entity {
     @Column(name = "opened_at")
     private Instant openedAt;
 
-    @Column(name = "is_opened", nullable = false)
+    @Column(name = "is_opened", nullable = false, columnDefinition = "boolean default false")
     private boolean isOpened;
 }
