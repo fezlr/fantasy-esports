@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.cs2.pack.controller;
 
+import com.fezlr.fantasy.cs2.pack.dto.response.InventoryPackCardCS2Response;
 import com.fezlr.fantasy.cs2.pack.dto.response.PackCS2Response;
 import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseCS2Response;
 import com.fezlr.fantasy.cs2.pack.service.PackCS2Service;
@@ -39,5 +40,14 @@ public class PackCS2Controller {
 
         return ResponseEntity
                 .ok(packCS2Service.purchasePackByUser(currentUser, shopPackId));
+    }
+
+    @PostMapping("/{packId}/open")
+    public ResponseEntity<InventoryPackCardCS2Response> openPackByCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData, @PathVariable("packId") Long packId) {
+        TelegramUserData telegramUserData = initDataValidator.validateAndExtractUser(initData);
+        UserEntity currentUser = userService.findByTelegramId(telegramUserData.telegramId());
+
+        return ResponseEntity
+                .ok(packCS2Service.openPackByUser(currentUser, packId));
     }
 }
