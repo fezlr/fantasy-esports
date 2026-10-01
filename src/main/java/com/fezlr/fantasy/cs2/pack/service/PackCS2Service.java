@@ -4,6 +4,7 @@ import com.fezlr.fantasy.common.exception.NotEnoughFantasyPointsException;
 import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
 import com.fezlr.fantasy.cs2.card.enums.Rarity;
 import com.fezlr.fantasy.cs2.card.service.CardCS2Service;
+import com.fezlr.fantasy.cs2.card.service.CardSellPriceCS2Service;
 import com.fezlr.fantasy.cs2.pack.dto.response.InventoryPackCardCS2Response;
 import com.fezlr.fantasy.cs2.pack.dto.response.PackCS2Response;
 import com.fezlr.fantasy.cs2.pack.dto.response.PackPurchaseCS2Response;
@@ -32,6 +33,7 @@ public class PackCS2Service {
     private final PackRarityRollerService packRarityRollerService;
     private final PlayerCS2Service playerCS2Service;
     private final CardCS2Service cardCS2Service;
+    private final CardSellPriceCS2Service cardSellPriceCS2Service;
     private final PackCS2Repository packCS2Repository;
     private final PackCS2Mapper packCS2Mapper;
     private final UserCS2Service userCS2Service;
@@ -111,6 +113,7 @@ public class PackCS2Service {
                 .userCS2(currentUser.getUserCS2Entity())
                 .playerCS2(player)
                 .rarity(rolledRarity)
+                .sellPrice(cardSellPriceCS2Service.calculateSellPrice(player, rolledRarity))
                 .receivedAt(Instant.now())
                 .build();
 
