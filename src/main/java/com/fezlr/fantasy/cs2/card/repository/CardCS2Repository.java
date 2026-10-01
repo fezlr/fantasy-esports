@@ -13,8 +13,8 @@ public interface CardCS2Repository extends JpaRepository<CardCS2Entity, Long> {
        SELECT c FROM CardCS2Entity c
        JOIN FETCH c.playerCS2 p
        LEFT JOIN FETCH  p.playerStatistics ps
-       WHERE c.userCS2.user.telegramId = :telegramId
+       WHERE c.userCS2.user.id = :userId
     """)
-    List<CardCS2Entity> findAllByUserTelegramId(@Param("telegramId") Long telegramId);
+    List<CardCS2Entity> findAllByUserId(@Param("telegramId") Long userId);
 
 }

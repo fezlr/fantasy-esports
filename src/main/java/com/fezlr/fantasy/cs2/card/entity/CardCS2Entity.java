@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
+//TODO: cron for sellPrice
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,12 +22,15 @@ public class CardCS2Entity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_cs2_id")
+    @JoinColumn(name = "user_cs2_id", nullable = false)
     private UserCS2Entity userCS2;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_cs2_id")
+    @JoinColumn(name = "player_cs2_id", nullable = false)
     private PlayerCS2Entity playerCS2;
+
+    @Column(name = "sell_price")
+    private long sellPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rarity", nullable = false)

@@ -16,6 +16,8 @@ public class CS2SyncJob {
     private final GridSyncJob gridSyncJob;
     private final ValveSyncJob valveSyncJob;
 
+    //TODO: add calculated price for cards
+
     @Scheduled(fixedRate = 3_600_000)
     public void syncAll() {
         log.info("Starting syncAll..");

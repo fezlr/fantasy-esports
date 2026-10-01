@@ -11,6 +11,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         And addition to that rest assured that CustomUserDetailsService is implemented
 */
 
+/*TODO: optimize telegramId by not finding it 2 times to each controller
+ */
+
 @EnableScheduling
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 public class FantasyApplication {

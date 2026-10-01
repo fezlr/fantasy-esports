@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.user.service;
 
+import com.fezlr.fantasy.common.exception.AccessDeniedException;
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import com.fezlr.fantasy.user.enums.Role;
@@ -66,6 +67,17 @@ public class UserService {
         return userRepository
                 .findByTelegramId(telegramId)
                 .orElseThrow(() -> new EntityNotFoundException("User is not found"));
+    }
+
+    public void isAvailable(UserEntity user) {
+        if (!user.isEnabled()) {
+            throw new AccessDeniedException("User is not enabled");
+        }
+    }
+
+    @Transactional
+    public void save(UserEntity user) {
+        userRepository.save(user);
     }
 
 }

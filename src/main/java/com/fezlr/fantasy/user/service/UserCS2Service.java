@@ -21,6 +21,12 @@ public class UserCS2Service {
                 .subtractFantasyPoints(userId, cost);
     }
 
+    @Transactional
+    public int addFantasyPoints(Long userId, long cost) {
+        return userCS2Repository
+                .addFantasyPoints(userId, cost);
+    }
+
     public UserFantasyPointsResponse findFantasyPointsByUser(UserEntity userEntity) {
         return userCS2Mapper.toFantasyPointsResponse(
                 userCS2Repository

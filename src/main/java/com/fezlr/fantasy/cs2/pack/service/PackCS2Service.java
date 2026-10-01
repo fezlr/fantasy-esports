@@ -1,8 +1,6 @@
 package com.fezlr.fantasy.cs2.pack.service;
 
-import com.fezlr.fantasy.common.exception.AccessDeniedException;
 import com.fezlr.fantasy.common.exception.NotEnoughFantasyPointsException;
-import com.fezlr.fantasy.common.exception.PackShopIsNotAvailableException;
 import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
 import com.fezlr.fantasy.cs2.card.enums.Rarity;
 import com.fezlr.fantasy.cs2.card.service.CardCS2Service;
@@ -19,6 +17,7 @@ import com.fezlr.fantasy.cs2.player.service.PlayerCS2Service;
 import com.fezlr.fantasy.user.entity.UserCS2Entity;
 import com.fezlr.fantasy.user.entity.UserEntity;
 import com.fezlr.fantasy.user.service.UserCS2Service;
+import com.fezlr.fantasy.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +35,7 @@ public class PackCS2Service {
     private final PackCS2Repository packCS2Repository;
     private final PackCS2Mapper packCS2Mapper;
     private final UserCS2Service userCS2Service;
+    private final UserService userService;
 
     public List<PackCS2Response> findAllPacksByTelegramId(Long telegramId) {
         return packCS2Repository
@@ -44,18 +44,13 @@ public class PackCS2Service {
                 .map(packCS2Mapper::toResponse).toList();
     }
 
-    //TODO: make throws like markPackAsOpened(pack); like in openPackByUser
     @Transactional
     public PackPurchaseCS2Response purchasePackByUser(UserEntity currentUser, Long shopPackId) {
-        if (!currentUser.isEnabled()) {
-            throw new AccessDeniedException("User is not enabled");
-        }
+        userService.isAvailable(currentUser);
 
         PackShopCS2Entity shopPack = packShopCS2Service.findById(shopPackId);
 
-        if (!shopPack.isAvailable()) {
-            throw new PackShopIsNotAvailableException("Pack is not available");
-        }
+        packShopCS2Service.validateShopPackIsAvailable(shopPack);
 
         if (shopPack.getCost() > currentUser.getUserCS2Entity().getFantasyPoints()) {
             throw new NotEnoughFantasyPointsException("Not enough fantasy points");
@@ -67,11 +62,7 @@ public class PackCS2Service {
                 .receivedAt(Instant.now())
                 .build();
 
-        int updatedRows = userCS2Service.subtractFantasyPoints(currentUser.getId(), shopPack.getCost());
-
-        if (updatedRows == 0) {
-            throw new NotEnoughFantasyPointsException("Nothing was updated");
-        }
+        substractFantasyPointsToAccount(currentUser, shopPack);
 
         UserCS2Entity userCS2Entity = currentUser.getUserCS2Entity();
 
@@ -82,9 +73,7 @@ public class PackCS2Service {
 
     @Transactional
     public InventoryPackCardCS2Response openPackByUser(UserEntity currentUser, Long packId) {
-        if (!currentUser.isEnabled()) {
-            throw new AccessDeniedException("User is not enabled");
-        }
+        userService.isAvailable(currentUser);
 
         PackCS2Entity pack = packCS2Repository
                 .findById(packId)
@@ -128,6 +117,14 @@ public class PackCS2Service {
         cardCS2Service.save(card);
     }
 
+    private void substractFantasyPointsToAccount(UserEntity currentUser, PackShopCS2Entity shopPack) {
+        int updatedRows = userCS2Service.subtractFantasyPoints(currentUser.getId(), shopPack.getCost());
+
+        if (updatedRows == 0) {
+            throw new NotEnoughFantasyPointsException("Nothing was updated");
+        }
+    }
+
     private void validateNotOpened(PackCS2Entity pack) {
         if (pack.isOpened()) {
             throw new IllegalStateException("PackId=" + pack.getId() + " is opened");
@@ -139,6 +136,5 @@ public class PackCS2Service {
             throw new IllegalArgumentException("Current userId=" + currentUser.getId() + " does not have packId=" + pack.getId());
         }
     }
-
 
 }

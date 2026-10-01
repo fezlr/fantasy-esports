@@ -1,5 +1,6 @@
 package com.fezlr.fantasy.user.entity;
 
+import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
 import com.fezlr.fantasy.cs2.pack.entity.PackCS2Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -26,6 +27,10 @@ public class UserCS2Entity {
     @Builder.Default
     @OneToMany(mappedBy = "userCS2", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<PackCS2Entity> packsCS2 = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "userCS2", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<CardCS2Entity> cardsCS2 = new ArrayList<>();
 
     @Builder.Default
     @Min(value = 0)

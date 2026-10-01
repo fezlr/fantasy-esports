@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.cs2.card.mapper;
 
 import com.fezlr.fantasy.cs2.card.dto.response.InventoryCardCS2Response;
+import com.fezlr.fantasy.cs2.card.dto.response.SellCardCS2Response;
 import com.fezlr.fantasy.cs2.card.entity.CardCS2Entity;
 import com.fezlr.fantasy.cs2.player.dto.response.InventoryPlayerCS2Response;
 import com.fezlr.fantasy.cs2.player.dto.response.PlayerCS2StatisticResponse;
@@ -16,6 +17,12 @@ public class CardCS2Mapper {
         return InventoryCardCS2Response.builder()
                 .rarity(entity.getRarity().name())
                 .player(toInventoryPlayerResponse(entity.getPlayerCS2()))
+                .build();
+    }
+
+    public SellCardCS2Response toSellCardResponse(CardCS2Entity entity) {
+        return SellCardCS2Response.builder()
+                .sellPrice(entity.getSellPrice())
                 .build();
     }
 

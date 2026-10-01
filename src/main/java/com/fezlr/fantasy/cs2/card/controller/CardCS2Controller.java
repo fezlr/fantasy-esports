@@ -1,6 +1,7 @@
 package com.fezlr.fantasy.cs2.card.controller;
 
 import com.fezlr.fantasy.cs2.card.dto.response.InventoryCardCS2Response;
+import com.fezlr.fantasy.cs2.card.dto.response.SellCardCS2Response;
 import com.fezlr.fantasy.cs2.card.service.CardCS2Service;
 import com.fezlr.fantasy.telegram.security.InitDataValidator;
 import com.fezlr.fantasy.user.dto.request.TelegramUserData;
@@ -9,9 +10,8 @@ import com.fezlr.fantasy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,9 +25,19 @@ public class CardCS2Controller {
     @GetMapping
     public ResponseEntity<List<InventoryCardCS2Response>> getAllCardsByCurrentUser(@RequestHeader(value = "X-Telegram-Init-Data") String initData) {
         TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
-        UserEntity user = userService.findByTelegramId(telegramUser.telegramId());
+        UserEntity currentUser = userService.findByTelegramId(telegramUser.telegramId());
 
         return ResponseEntity
-                .ok(cardCS2Service.findAllCardsByTelegramId(user.getTelegramId()));
+                .ok(cardCS2Service.findAllCardsByTelegramId(currentUser));
     }
+
+    @PostMapping
+    public ResponseEntity<SellCardCS2Response> sellCardByCurrentUser(@RequestHeader("X-Telegram-Init-Data") String initData, Long cardId) {
+        TelegramUserData telegramUser = initDataValidator.validateAndExtractUser(initData);
+        UserEntity currentUser = userService.findByTelegramId(telegramUser.telegramId());
+
+        return ResponseEntity
+                .ok(cardCS2Service.sellCardByTelegramId(currentUser, cardId));
+    }
+
 }

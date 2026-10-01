@@ -14,10 +14,19 @@ public interface UserCS2Repository extends JpaRepository<UserCS2Entity, Long> {
     @Modifying
     @Query("""
             UPDATE UserCS2Entity ucs
-            SET ucs.fantasyPoints = ucs.fantasyPoints - :amount
-            WHERE ucs.user.id = :userId AND ucs.fantasyPoints >= :amount
+            SET ucs.fantasyPoints = ucs.fantasyPoints - :cost
+            WHERE ucs.user.id = :userId AND ucs.fantasyPoints >= :cost
             """)
-    int subtractFantasyPoints(@Param("userId") Long userId, @Param("amount") long cost);
+    int subtractFantasyPoints(@Param("userId") Long userId, @Param("cost") long cost);
 
     Optional<UserCS2Entity> findByUser(UserEntity userEntity);
+
+    @Modifying
+    @Query("""
+            UPDATE UserCS2Entity ucs
+            SET ucs.fantasyPoints = ucs.fantasyPoints + :cost
+            WHERE ucs.user.id = :userId
+            """
+    )
+    int addFantasyPoints(@Param("userId") Long userId, @Param("cost") long cost);
 }
