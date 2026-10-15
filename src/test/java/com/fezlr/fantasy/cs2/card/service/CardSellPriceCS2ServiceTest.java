@@ -18,9 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CardSellPriceCS2ServiceTest {
-
     private static final int NO_TOP_RANK = 100;
-
     private final CardSellPriceCS2Service calculator = new CardSellPriceCS2Service();
 
     private PlayerCS2Entity player(String rating, int teamRank) {
